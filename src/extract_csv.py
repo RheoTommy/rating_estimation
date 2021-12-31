@@ -1,14 +1,8 @@
-import string
-
 import pandas as pd
 import tqdm
 
 
-def f(s: str):
-    s.startswith("abc") or s.startswith("arc") or s.startswith("agc")
-
-
-def sample():
+def extract_csv():
     file_name = "data/submissions.csv"
     reader = pd.read_csv(file_name, chunksize=1000000)
     df = pd.DataFrame([])
@@ -23,4 +17,5 @@ def sample():
 
     df.to_csv("data/extract.csv")
 
-sample()
+
+extract_csv()
