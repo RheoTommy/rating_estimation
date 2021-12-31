@@ -3,7 +3,7 @@ import tqdm
 
 
 def extract_csv():
-    file_name = "data/submissions.csv"
+    file_name = "csv/submissions.csv"
     reader = pd.read_csv(file_name, chunksize=1000000)
     df = pd.DataFrame([])
     for r in tqdm.tqdm(reader):
@@ -15,11 +15,11 @@ def extract_csv():
     print(df.head())
     print(df.shape)
 
-    df.to_csv("data/extract.csv", index=False)
+    df.to_csv("csv/extract.csv", index=False)
 
 
 def sort_csv():
-    file_name = "data/extract.csv"
+    file_name = "csv/extract.csv"
     reader = pd.read_csv(file_name)
     reader = reader.sort_values("id", ascending=True)
     print(reader.head(100))
