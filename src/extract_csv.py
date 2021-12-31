@@ -15,7 +15,15 @@ def extract_csv():
     print(df.head())
     print(df.shape)
 
-    df.to_csv("data/extract.csv")
+    df.to_csv("data/extract.csv", index=False)
+
+
+def sort_csv():
+    file_name = "data/extract.csv"
+    reader = pd.read_csv(file_name)
+    reader = reader.sort_values("id", ascending=True)
+    print(reader.head(100))
 
 
 extract_csv()
+sort_csv()
