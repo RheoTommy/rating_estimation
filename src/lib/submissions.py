@@ -16,7 +16,7 @@ class Submission:
 
 
 def get_all_submissions() -> [Submission]:
-    path = __file__ + "pickle/submissions.pickle"
+    path = "pickle/submissions.pickle"
     with open(path, "rb") as f:
         pk = pickle.load(f)
         return pk
