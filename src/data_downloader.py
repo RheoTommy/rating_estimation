@@ -1,19 +1,26 @@
+import string
+
 import pandas as pd
 import tqdm
 
 
+def f(s: str):
+    s.startswith("abc") or s.startswith("arc") or s.startswith("agc")
+
+
 def sample():
-    file_name = "submissions.csv"
+    file_name = "data/submissions.csv"
     reader = pd.read_csv(file_name, chunksize=1000000)
     df = pd.DataFrame([])
     for r in tqdm.tqdm(reader):
-        df = pd.concat([df, r.query("1609588800<=epoch_second")])
-        # df = pd.concat([df, r.query("epoch_second>=1609588800").filter(like="abc")])
-        # df = pd.concat([df, r.query("epoch_second>=1609588800").filter(like="arc")])
-        # df = pd.concat([df, r.query("epoch_second>=1609588800").filter(like="agc")])
+        dfi = r.query("1609588800<=epoch_second").query("language.str.startswith('C++')", engine="python")
+        df = pd.concat([df, dfi.query("contest_id.str.startswith('abc')", engine="python")])
+        df = pd.concat([df, dfi.query("contest_id.str.startswith('arc')", engine="python")])
+        df = pd.concat([df, dfi.query("contest_id.str.startswith('agc')", engine="python")])
 
     print(df.head())
     print(df.shape)
 
+    df.to_csv("data/extract.csv")
 
 sample()
