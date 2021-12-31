@@ -22,7 +22,7 @@ def sort_csv():
     file_name = "data/extract.csv"
     reader = pd.read_csv(file_name)
     reader = reader.sort_values("id", ascending=True)
-    print(reader.head())
+    print(reader.head(100))
 
 
 extract_csv()
