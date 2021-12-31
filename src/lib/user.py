@@ -31,7 +31,3 @@ def get_user_history(user_id: str) -> [(int, int)]:
 def iso_time_to_epoch_second(iso_time: str) -> int:
     t = datetime.fromisoformat(iso_time)
     return int(t.timestamp())
-
-
-h = get_user_history("RheoTommy")
-print(h)
