@@ -1,9 +1,8 @@
-import collections
 import json
 
 
 # [(contest_id, epoch_second)] -> [during_contest?]
-def is_during_contest(queries: [(int, int)]) -> [bool]:
+def is_during_contest(queries: [(str, int)]) -> [bool]:
     dc = {}
 
     with open("json/contests.json", "rb") as f:
@@ -22,7 +21,7 @@ def is_during_contest(queries: [(int, int)]) -> [bool]:
 
 # [problem_id] -> [difficulty]
 def get_difficulty(queries: [str]) -> [int]:
-    with open("json/problem_models.json", "rb") as f:
+    with open("json/problem-models.json", "rb") as f:
         json_dist = json.load(f)
         res = []
         for problem_id in queries:
