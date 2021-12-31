@@ -37,4 +37,3 @@ def get_difficulty(queries: [str]) -> [int]:
 
     return res
 
-is_during_contest([("ab")])
