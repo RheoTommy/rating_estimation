@@ -36,3 +36,5 @@ def get_difficulty(queries: [str]) -> [int]:
         res.append(od[problem_id])
 
     return res
+
+is_during_contest([("ab")])
