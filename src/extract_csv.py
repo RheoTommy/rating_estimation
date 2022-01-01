@@ -3,7 +3,7 @@ import time
 import pandas as pd
 import tqdm
 
-from src.lib.user import get_user_history, save_all_user_histories
+from lib.user import get_user_history, save_all_user_histories
 
 
 def filter_with_contest_id(contest_id: str) -> bool:
@@ -42,8 +42,8 @@ def get_all_user_histories():
     df = pd.read_csv(file_name)
     user_id_list = df["user_id"].unique()
     user_histories = {}
-    for user_id in user_id_list:
-        time.sleep(1 / 6)
+    for user_id in tqdm.tqdm(user_id_list):
+        time.sleep(5)
         user_histories[user_id] = get_user_history(user_id)
     save_all_user_histories(user_histories)
 
