@@ -1,3 +1,4 @@
+import pickle
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -7,8 +8,8 @@ import tqdm
 
 # [(user_id, epoch_second)] -> [rating]
 def get_rating(queries: List[Tuple[str, int]]) -> List[int]:
-    history_dict = {}
     ratings = []
+    history_dict = load_all_user_histories()
     print("processing queries in \"get_rating\"")
     for (user_id, epoch_second) in tqdm.tqdm(queries):
         ratings.append(get_rating_query(user_id, epoch_second, history_dict))
@@ -42,6 +43,17 @@ def get_user_history(user_id: str) -> List[Tuple[int, int]]:
         return res
     else:
         raise Exception("bad request while getting user history: {} (user_id: {})".format(r.reason, user_id))
+
+
+def save_all_user_histories(user_histories: Dict[str, List[Tuple[int, int]]]):
+    with open("pickle/user_histories.pickle", "wb") as f:
+        pickle.dump(user_histories, f)
+
+
+def load_all_user_histories() -> Dict[str, List[Tuple[int, int]]]:
+    with open("pickle/user_histories.pickle", "rb") as f:
+        pk = pickle.load(f)
+        return pk
 
 
 def iso_time_to_epoch_second(iso_time: str) -> int:

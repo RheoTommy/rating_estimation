@@ -38,7 +38,7 @@ rating = {}""".format(
         )
 
 
-def get_all_submissions() -> List[Submission]:
+def load_all_submissions() -> List[Submission]:
     path = "pickle/submissions.pickle"
     with open(path, "rb") as f:
         pk = pickle.load(f)

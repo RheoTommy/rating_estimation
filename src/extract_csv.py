@@ -1,5 +1,9 @@
+import time
+
 import pandas as pd
 import tqdm
+
+from src.lib.user import get_user_history, save_all_user_histories
 
 
 def filter_with_contest_id(contest_id: str) -> bool:
@@ -33,13 +37,17 @@ def sort_csv():
     print(reader.head(70))
 
 
-def unique_user():
+def get_all_user_histories():
     file_name = "csv/extract.csv"
     df = pd.read_csv(file_name)
-    print("all submission count: {}".format(df.shape[0]))
-    print("unique user count: {}".format(df["user_id"].nunique()))
+    user_id_list = df["user_id"].unique()
+    user_histories = {}
+    for user_id in user_id_list:
+        time.sleep(1 / 6)
+        user_histories[user_id] = get_user_history(user_id)
+    save_all_user_histories(user_histories)
 
 
 # extract_csv()
 # sort_csv()
-unique_user()
+get_all_user_histories()
