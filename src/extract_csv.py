@@ -33,5 +33,13 @@ def sort_csv():
     print(reader.head(70))
 
 
-extract_csv()
-sort_csv()
+def unique_user():
+    file_name = "csv/extract.csv"
+    df = pd.read_csv(file_name)
+    print("all submission count: {}".format(df.shape[0]))
+    print("unique user count: {}".format(df["user_id"].nunique()))
+
+
+# extract_csv()
+# sort_csv()
+unique_user()
