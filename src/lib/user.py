@@ -17,7 +17,7 @@ def get_rating(queries: List[Tuple[str, int]]) -> List[int]:
 
 
 def get_rating_query(user_id: str, epoch_second: int, history_dict: Dict[str, List[Tuple[int, int]]]) -> int:
-    history = history_dict.get(user_id, get_user_history(user_id))
+    history = history_dict[user_id]
     return get_rating_from_history(epoch_second, history)
 
 
