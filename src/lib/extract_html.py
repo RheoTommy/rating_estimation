@@ -1,3 +1,4 @@
+import requests
 from bs4 import BeautifulSoup
 
 
@@ -10,3 +11,15 @@ def source_code_extractor(html: str) -> str:
 
 def create_submission_url(contest_id: str, submission_id: str) -> str:
     return "https://atcoder.jp/contests/{}/submissions/{}".format(contest_id, submission_id)
+
+
+def get_source_code(contest_id: str, submission_id: str) -> str:
+    url = create_submission_url(contest_id, submission_id)
+    r = requests.get(url)
+    if r.ok:
+        s = r.text
+        s = source_code_extractor(s)
+        return s
+    else:
+        raise Exception(
+            "bad request: {} (contest_id: {}, submission_id: {})".format(r.reason, contest_id, submission_id))
