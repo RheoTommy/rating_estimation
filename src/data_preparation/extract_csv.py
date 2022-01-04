@@ -26,12 +26,4 @@ def extract_csv():
     df.to_csv("csv/extract.csv", index=False)
 
 
-def sort_csv():
-    file_name = "csv/extract.csv"
-    reader = pd.read_csv(file_name)
-    reader = reader.sort_values("id", ascending=False)
-    print(reader.head(70))
-
-
 extract_csv()
-sort_csv()
