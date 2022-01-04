@@ -1,4 +1,5 @@
 import pickle
+from typing import List
 
 
 class Submission:
@@ -14,9 +15,36 @@ class Submission:
         self.difficulty = difficulty
         self.rating = rating
 
+    def __str__(self) -> str:
+        return """\
+submission_id = {},
+epoch_second = {},
+problem_id = {},
+contest_id = {},
+user_id = {},
+is_ac = {},
+during_contest = {},
+difficulty = {},
+rating = {}""".format(
+            self.submission_id,
+            self.epoch_second,
+            self.problem_id,
+            self.contest_id,
+            self.user_id,
+            self.is_ac,
+            self.during_contest,
+            self.difficulty,
+            self.rating
+        )
 
-def get_all_submissions() -> [Submission]:
+
+def load_all_submissions() -> List[Submission]:
     path = "pickle/submissions.pickle"
     with open(path, "rb") as f:
         pk = pickle.load(f)
         return pk
+
+
+def save_all_submissions(submissions: List[Submission]):
+    with open("pickle/submissions.pickle", "wb") as f:
+        pickle.dump(submissions, f)
