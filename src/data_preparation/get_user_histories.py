@@ -2,7 +2,7 @@ import pandas as pd
 import tqdm
 import time
 
-from lib.user import get_user_history, save_all_user_histories
+from src.lib.user import get_user_history, save_all_user_histories
 
 
 def get_all_user_histories():

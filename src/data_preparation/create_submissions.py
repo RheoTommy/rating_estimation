@@ -5,9 +5,9 @@ import pandas as pd
 import tqdm
 from pandas import DataFrame
 
-from lib.problems import get_difficulty, is_during_contest
-from lib.submissions import Submission, save_all_submissions
-from lib.user import get_rating
+from src.lib.problems import get_difficulty, is_during_contest
+from src.lib.submissions import Submission, save_all_submissions
+from src.lib.user import get_rating
 
 
 def convert_csv_to_submissions(df: DataFrame) -> List[Submission]:
