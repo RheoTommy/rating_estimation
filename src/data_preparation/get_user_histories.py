@@ -11,7 +11,9 @@ def get_all_user_histories():
     user_id_list = df["user_id"].unique()
     user_histories = load_all_user_histories()
     for user_id in tqdm.tqdm(user_id_list):
-        while user_id in user_histories:
+        if user_id in user_histories:
+            continue
+        while True:
             try:
                 time.sleep(0.5)
                 user_histories[user_id] = get_user_history(user_id)
