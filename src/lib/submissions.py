@@ -67,5 +67,6 @@ def with_source_codes(submissions: List[Submission]) -> List[Tuple[Submission, s
 
 def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
     return list(
-        filter(lambda submission: submission.during_contest and submission.is_ac and 400 <= submission.difficulty,
-               submissions))
+        filter(
+            lambda submission: submission.during_contest and submission.is_ac and 400 <= submission.difficulty,
+            submissions))
