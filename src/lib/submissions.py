@@ -83,3 +83,13 @@ def extract_available_submissions(submissions: List[Submission]) -> List[Submiss
         return os.path.isfile("source_codes/{}.cpp".format(submission.submission_id))
 
     return list(filter(f, tqdm.tqdm(submissions)))
+
+
+def load_all_available_submissions() -> List[Submission]:
+    with open("pickle/available_submissions.pickle", "rb") as f:
+        return pickle.load(f)
+
+
+def save_all_available_submissions(submissions: List[Submission]):
+    with open("pickle/available_submissions.pickle", "wb") as f:
+        pickle.dump(submissions, f)
