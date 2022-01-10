@@ -31,12 +31,12 @@ def sampling() -> List[Tuple[Submission, str]]:
     # return res
 
 
-# func : (dataset: List[Submission]) -> (features: List[float])
-def testing(func: Callable[[List[Submission]], List[float]], dataset: List[Submission]):
+# func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
+def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset: List[Tuple[Submission, str]]):
     features = standardize(func(dataset))
     ratings = []
     for s in dataset:
-        ratings.append(s.rating)
+        ratings.append(s[0].rating)
     # 統計処理をする(相関とか)
 
 
