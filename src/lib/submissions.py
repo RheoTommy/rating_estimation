@@ -1,5 +1,10 @@
 import pickle
-from typing import List
+import time
+from typing import List, Tuple
+
+import tqdm
+
+from src.lib.extract_html import get_source_code
 
 
 class Submission:
@@ -48,3 +53,19 @@ def load_all_submissions() -> List[Submission]:
 def save_all_submissions(submissions: List[Submission]):
     with open("pickle/submissions.pickle", "wb") as f:
         pickle.dump(submissions, f)
+
+
+# [submission] -> [(submission, source_code)]
+def with_source_codes(submissions: List[Submission]) -> List[Tuple[Submission, str]]:
+    def f(submission: Submission) -> Tuple[Submission, str]:
+        time.sleep(0.1)
+        source_code = get_source_code(submission.contest_id, submission.submission_id)
+        return submission, source_code
+
+    return list(map(f, tqdm.tqdm(submissions)))
+
+
+def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
+    return list(
+        filter(lambda submission: submission.during_contest and submission.is_ac and 400 <= submission.difficulty,
+               submissions))
