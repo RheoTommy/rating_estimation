@@ -13,7 +13,7 @@ def get_all_source_codes():
     for submission in tqdm(submissions):
         for _ in range(5):
             try:
-                time.sleep(0.1)
+                time.sleep(0.25)
                 source_code = get_source_code(submission.contest_id, submission.submission_id)
                 with open("source_codes/{}.cpp".format(submission.submission_id), "wb") as f:
                     f.write(source_code.encode())
