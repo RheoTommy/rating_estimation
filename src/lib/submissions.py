@@ -62,6 +62,7 @@ def with_source_codes(submissions: List[Submission]) -> List[Tuple[Submission, s
         try:
             source_code = get_source_code(submission.contest_id, submission.submission_id)
         except Exception as e:
+            print(e)
             return submission, ""
         else:
             return submission, source_code
@@ -74,3 +75,5 @@ def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
         filter(
             lambda submission: submission.during_contest and submission.is_ac and 400 <= submission.difficulty,
             submissions))
+
+
