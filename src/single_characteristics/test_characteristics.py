@@ -17,5 +17,5 @@ def testing(func: Callable[[List[Submission]], List[int]], dataset: List[Submiss
     # estimation に対する統計処理をする(誤差とか)
 
 
-dataset = sampling()
-testing(, dataset)
+# dataset = sampling()
+# testing(, dataset)

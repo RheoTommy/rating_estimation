@@ -9,11 +9,11 @@ def source_code_extractor(html: str) -> str:
     return dom[0].text
 
 
-def create_submission_url(contest_id: str, submission_id: str) -> str:
+def create_submission_url(contest_id: str, submission_id: int) -> str:
     return "https://atcoder.jp/contests/{}/submissions/{}".format(contest_id, submission_id)
 
 
-def get_source_code(contest_id: str, submission_id: str) -> str:
+def get_source_code(contest_id: str, submission_id: int) -> str:
     url = create_submission_url(contest_id, submission_id)
     r = requests.get(url)
     if r.ok:
