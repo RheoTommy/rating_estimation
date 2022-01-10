@@ -3,11 +3,13 @@ import time
 from tqdm import tqdm
 
 from src.lib.extract_html import get_source_code
-from src.lib.submissions import load_all_submissions, extract_available_submissions, save_all_available_submissions
+from src.lib.submissions import load_all_submissions, extract_available_submissions, save_all_available_submissions, \
+    filtered_submissions
 
 
 def get_all_source_codes():
     submissions = load_all_submissions()
+    submissions = filtered_submissions(submissions)
     for submission in tqdm(submissions):
         for _ in range(5):
             try:
