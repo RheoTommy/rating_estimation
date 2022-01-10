@@ -1,3 +1,4 @@
+import os.path
 import pickle
 import time
 from typing import List, Tuple
@@ -77,3 +78,8 @@ def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
             submissions))
 
 
+def extract_available_submissions(submissions: List[Submission]) -> List[Submission]:
+    def f(submission: Submission) -> bool:
+        return os.path.isfile("source_codes/{}.cpp".format(submission.submission_id))
+
+    return list(filter(f, tqdm.tqdm(submissions)))
