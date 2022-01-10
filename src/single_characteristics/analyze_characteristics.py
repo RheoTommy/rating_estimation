@@ -18,7 +18,6 @@ def sampling() -> List[Tuple[Submission, str]]:
     print("start getting source codes")
     res = with_source_codes(sample_sub)
     print("finish getting source codes")
-    res = list(filter(lambda x: x[1] != "", res))
     print("available data count : {}".format(len(res)))
     return res
     # 提出データのローカル保存が終わったら
