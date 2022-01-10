@@ -1,3 +1,4 @@
+import os.path
 import time
 
 from tqdm import tqdm
@@ -11,6 +12,8 @@ def get_all_source_codes():
     submissions = load_all_submissions()
     submissions = filtered_submissions(submissions)
     for submission in tqdm(submissions):
+        if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
+            continue
         for _ in range(5):
             try:
                 time.sleep(0.25)
