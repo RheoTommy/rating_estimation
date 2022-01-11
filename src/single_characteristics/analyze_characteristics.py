@@ -37,7 +37,7 @@ def sampling() -> List[Tuple[Submission, str]]:
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
 def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset: List[Tuple[Submission, str]],
             file_name: str):
-    data_handle = "standardize"
+    data_handle = ""
     if data_handle == "normalize":
         features = normalize(func(dataset))
     elif data_handle == "standardize":
