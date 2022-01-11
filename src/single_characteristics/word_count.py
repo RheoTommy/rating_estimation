@@ -17,7 +17,12 @@ def word_count(dataset: List[Tuple[Submission, str]], word: str) -> List[float]:
 def word_count_in_main(dataset: List[Tuple[Submission, str]], word: str) -> List[float]:
     res = []
     for _, code in dataset:
-        res.append(extract_str_in_main(code).count(word))
+        try:
+            res.append(extract_str_in_main(code).count(word))
+        except Exception as e:
+            print(e)
+            res.append(0)
+
     return res
 
 
