@@ -14,7 +14,6 @@ def extract_str_in_main(code: str) -> str:
         if end == len(code):
             raise Exception("main 関数の終わりが見つからねえ！")
         ch = code[end]
-        print(ch)
         if ch == '{':
             now += 1
         elif ch == '}':
