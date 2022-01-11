@@ -3,7 +3,7 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from src.lib.data_handling import standardize
+from src.lib.data_handling import standardize, normalize
 from src.lib.submissions import filtered_submissions, load_all_submissions, with_source_codes
 from src.single_characteristics.word_count import *
 from matplotlib import pyplot as plt
@@ -37,7 +37,14 @@ def sampling() -> List[Tuple[Submission, str]]:
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
 def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset: List[Tuple[Submission, str]],
             file_name: str):
-    features = standardize(func(dataset))
+    data_handle = "standardize"
+    if data_handle == "normalize":
+        features = normalize(func(dataset))
+    elif data_handle == "standardize":
+        features = standardize(func(dataset))
+    else:
+        data_handle = "nothing"
+        features = func(dataset)
     ratings = []
     for s in dataset:
         ratings.append(s[0].rating)
@@ -46,7 +53,7 @@ def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset
     plt.legend(loc="best")
     plt.xlabel("features")
     plt.ylabel("ratings")
-    plt.savefig("fig/{}.pdf".format(file_name))
+    plt.savefig("figs/{}_{}.pdf".format(data_handle, file_name))
     plt.cla()
     plt.clf()
 
