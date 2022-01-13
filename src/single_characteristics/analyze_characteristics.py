@@ -4,15 +4,16 @@ import numpy as np
 import pandas as pd
 
 from src.lib.data_handling import standardize, normalize
-from src.lib.submissions import filtered_submissions, load_all_submissions, with_source_codes
+from src.lib.submissions import filtered_submissions, load_all_submissions, with_source_codes, \
+    load_all_available_submissions
 from src.single_characteristics.word_count import *
 from matplotlib import pyplot as plt
 
 
 def sampling() -> List[Tuple[Submission, str]]:
-    sample_size = 500
-    # 提出データのローカル保存が終わるまで
-    all_sub = filtered_submissions(load_all_submissions())
+    sample_size = 5000
+    # 提出データのローカル保存が終わったら
+    all_sub = load_all_available_submissions()
     idx = np.random.choice(np.arange(len(all_sub)), sample_size, replace=False)
     sample_sub = []
     for i in idx:
@@ -20,18 +21,7 @@ def sampling() -> List[Tuple[Submission, str]]:
     print("start getting source codes")
     res = with_source_codes(sample_sub)
     print("finish getting source codes")
-    print("available data count : {}".format(len(res)))
     return res
-    # 提出データのローカル保存が終わったら
-    # all_sub = load_all_available_submissions()
-    # idx = np.random.choice(np.arange(len(all_sub)), sample_size, replace=False)
-    # sample_sub = []
-    # for i in idx:
-    #     sample_sub.append(all_sub[i])
-    # print("start getting source codes")
-    # res = with_source_codes(sample_sub)
-    # print("finish getting source codes")
-    # return res
 
 
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
@@ -64,12 +54,12 @@ testing(word_count_any("define"), dataset, "wc_define")
 testing(word_count_any("using"), dataset, "wc_using")
 testing(word_count_any("define int long long"), dataset, "wc_define_int_long_long")
 testing(word_count_any("for"), dataset, "wc_for")
-# testing(word_count_any_in_main("for"), dataset)
+testing(word_count_any_in_main("for"), dataset, "wc(main)_for")
 testing(word_count_any("if"), dataset, "wc_if")
-# testing(word_count_any_in_main("if"), dataset)
+testing(word_count_any_in_main("if"), dataset, "wc(main)_if")
 testing(word_count_any("vector"), dataset, "wc_vector")
-# testing(word_count_any_in_main("vector"), dataset)
+testing(word_count_any_in_main("vector"), dataset, "wc(main)_vector")
 testing(word_count_any("rep"), dataset, "wc_rep")
-# testing(word_count_any_in_main("rep"), dataset)
+testing(word_count_any_in_main("rep"), dataset, "wc(main)_rep")
 testing(word_count_any("auto"), dataset, "wc_auto")
-# testing(word_count_any_in_main("auto"), dataset)
+testing(word_count_any_in_main("auto"), dataset, "wc(main)_auto")
