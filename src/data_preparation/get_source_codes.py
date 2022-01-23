@@ -21,7 +21,7 @@ def get_all_source_codes():
                 with open("source_codes/{}.cpp".format(submission.submission_id), "wb") as f:
                     f.write(source_code.encode())
             except Exception as e:
-                print(e)
+                tqdm.write(e)
             else:
                 break
 

@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 import pandas as pd
-import tqdm
+from tqdm import tqdm
 from pandas import DataFrame
 
 from src.lib.problems import get_difficulty, is_during_contest
@@ -38,7 +38,7 @@ def convert_csv_to_submissions(df: DataFrame) -> List[Submission]:
 
     submissions = []
     print("creating submission list")
-    for i in tqdm.tqdm(range(len(submission_id_list))):
+    for i in tqdm(range(len(submission_id_list))):
         submissions.append(
             Submission(
                 submission_id_list[i],

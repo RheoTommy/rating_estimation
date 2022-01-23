@@ -1,9 +1,7 @@
-from typing import Callable, List, Tuple
-
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import tqdm
+from tqdm import tqdm
 
 from src.lib.data_handling import standardize, normalize, exclude_outliers, extract_specified_elements
 from src.lib.submissions import with_source_codes, load_all_available_submissions
@@ -77,11 +75,14 @@ def save_pair_plot(dataset: List[Tuple[Submission, str]],
 
     df = pd.DataFrame({"ratings": list(map(lambda t: t[0].rating, dataset))})
     mask = [True for _ in range(len(dataset))]
-    for (func, func_name) in tqdm.tqdm(funcs_and_names):
+    for (func, func_name) in tqdm(funcs_and_names):
         features = func(dataset)
         mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_outliers(features, 2))))
         df[func_name] = features
     df = df[mask]
+
+    print(df.corr())
+
     sns.pairplot(df)
     plt.savefig("figs/pair_plot.png")
     plt.clf()

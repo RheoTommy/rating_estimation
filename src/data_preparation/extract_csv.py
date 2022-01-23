@@ -1,5 +1,5 @@
 import pandas as pd
-import tqdm
+from tqdm import tqdm
 
 
 def filter_with_contest_id(contest_id: str) -> bool:
@@ -17,7 +17,7 @@ def extract_csv():
     file_name = "csv/submissions.csv"
     reader = pd.read_csv(file_name, chunksize=1000000)
     df = pd.DataFrame([])
-    for r in tqdm.tqdm(reader):
+    for r in tqdm(reader):
         dfi = r.query("1609588800<=epoch_second<1640962800").query("language.str.startswith('C++')", engine="python")
         df = pd.concat([df, dfi.query("contest_id.apply(@filter_with_contest_id)", engine="python")])
 
