@@ -3,7 +3,7 @@ from typing import Callable, List, Tuple
 import numpy as np
 import pandas as pd
 
-from src.lib.data_handling import standardize, normalize, exclude_outliers
+from src.lib.data_handling import standardize, normalize, exclude_outliers, extract_specified_elements
 from src.lib.submissions import with_source_codes, load_all_available_submissions
 from src.single_characteristics.extract_characteristics import *
 from matplotlib import pyplot as plt
@@ -26,12 +26,13 @@ def sampling() -> List[Tuple[Submission, str]]:
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
 def testing(dataset: List[Tuple[Submission, str]], func: Callable[[List[Tuple[Submission, str]]], List[float]],
             file_name: str, data_handle_func: Callable[[List[float]], List[float]] = standardize,
-            data_handle_name: str = "standardize", do_exclude_outliers=True, sigma=1):
+            data_handle_name: str = "standardize", do_exclude_outliers=True, sigma=2):
     features = data_handle_func(func(dataset))
-    features = exclude_outliers(features, sigma)
-    ratings = []
-    for s in dataset:
-        ratings.append(s[0].rating)
+    ratings = list(map(lambda x: x[0].rating, dataset))
+    if do_exclude_outliers:
+        idx = exclude_outliers(features, sigma)
+        features = extract_specified_elements(features, idx)
+        ratings = extract_specified_elements(ratings, idx)
     # 統計処理をする(相関とか)
     plt.scatter(features, ratings, label="R: {}".format(pd.Series(features).corr(pd.Series(ratings))))
     plt.legend(loc="best")
