@@ -1,11 +1,8 @@
-from typing import Callable
-
 import numpy as np
 import pandas as pd
 
 from src.lib.data_handling import standardize, normalize
-from src.lib.submissions import filtered_submissions, load_all_submissions, with_source_codes, \
-    load_all_available_submissions
+from src.lib.submissions import with_source_codes, load_all_available_submissions
 from src.single_characteristics.word_count import *
 from matplotlib import pyplot as plt
 
@@ -25,16 +22,10 @@ def sampling() -> List[Tuple[Submission, str]]:
 
 
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
-def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset: List[Tuple[Submission, str]],
-            file_name: str):
-    data_handle = ""
-    if data_handle == "normalize":
-        features = normalize(func(dataset))
-    elif data_handle == "standardize":
-        features = standardize(func(dataset))
-    else:
-        data_handle = "nothing"
-        features = func(dataset)
+def testing(dataset: List[Tuple[Submission, str]], func: Callable[[List[Tuple[Submission, str]]], List[float]],
+            file_name: str, data_handle_func: Callable[[List[float]], List[float]] = standardize,
+            data_handle_name: str = "standardize"):
+    features = data_handle_func(func(dataset))
     ratings = []
     for s in dataset:
         ratings.append(s[0].rating)
@@ -43,23 +34,37 @@ def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset
     plt.legend(loc="best")
     plt.xlabel("features")
     plt.ylabel("ratings")
-    plt.savefig("figs/{}_{}.pdf".format(data_handle, file_name))
+    plt.savefig("figs/{}_{}.pdf".format(data_handle_name, file_name))
     plt.cla()
     plt.clf()
 
 
-dataset = sampling()
-testing(code_length, dataset, "code_length")
-testing(word_count_any("define"), dataset, "wc_define")
-testing(word_count_any("using"), dataset, "wc_using")
-testing(word_count_any("define int long long"), dataset, "wc_define_int_long_long")
-testing(word_count_any("for"), dataset, "wc_for")
-testing(word_count_any_in_main("for"), dataset, "wc(main)_for")
-testing(word_count_any("if"), dataset, "wc_if")
-testing(word_count_any_in_main("if"), dataset, "wc(main)_if")
-testing(word_count_any("vector"), dataset, "wc_vector")
-testing(word_count_any_in_main("vector"), dataset, "wc(main)_vector")
-testing(word_count_any("rep"), dataset, "wc_rep")
-testing(word_count_any_in_main("rep"), dataset, "wc(main)_rep")
-testing(word_count_any("auto"), dataset, "wc_auto")
-testing(word_count_any_in_main("auto"), dataset, "wc(main)_auto")
+d = sampling()
+
+testing(d, code_length, "code_length")
+
+funcs_and_names = [
+    (word_count_any("define"), "wc_define"),
+    (word_count_any("using"), "wc_using"),
+    (word_count_any("define int long long"), "wc_define_int_long_long"),
+    (word_count_any("for"), "wc_for"),
+    (word_count_any("if"), "wc_if"),
+    (word_count_any("vector"), "wc_vector"),
+    (word_count_any("rep"), "wc_rep"),
+    (word_count_any("auto"), "wc_auto"),
+    (word_count_any_in_main("for"), "wc(main)_for"),
+    (word_count_any_in_main("if"), "wc(main)_if"),
+    (word_count_any_in_main("vector"), "wc(main)_vector"),
+    (word_count_any_in_main("rep"), "wc(main)_rep"),
+    (word_count_any_in_main("auto"), "wc(main)_auto"),
+]
+
+data_handle_funcs_and_names = [
+    (standardize, "standardize"),
+    (normalize, "normalize"),
+    (lambda x: x, "nothing"),
+]
+
+for (f, fn) in funcs_and_names:
+    for (hf, hfn) in data_handle_funcs_and_names:
+        testing(d, f, fn, hf, hfn)
