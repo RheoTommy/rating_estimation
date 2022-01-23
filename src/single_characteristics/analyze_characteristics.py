@@ -22,16 +22,10 @@ def sampling() -> List[Tuple[Submission, str]]:
 
 
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
-def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset: List[Tuple[Submission, str]],
-            file_name: str):
-    data_handle = ""
-    if data_handle == "normalize":
-        features = normalize(func(dataset))
-    elif data_handle == "standardize":
-        features = standardize(func(dataset))
-    else:
-        data_handle = "nothing"
-        features = func(dataset)
+def testing(dataset: List[Tuple[Submission, str]], func: Callable[[List[Tuple[Submission, str]]], List[float]],
+            file_name: str, data_handle_func: Callable[[List[float]], List[float]] = standardize,
+            data_handle_name: str = "standardize"):
+    features = data_handle_func(func(dataset))
     ratings = []
     for s in dataset:
         ratings.append(s[0].rating)
@@ -40,23 +34,37 @@ def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset
     plt.legend(loc="best")
     plt.xlabel("features")
     plt.ylabel("ratings")
-    plt.savefig("figs/{}_{}.pdf".format(data_handle, file_name))
+    plt.savefig("figs/{}_{}.pdf".format(data_handle_name, file_name))
     plt.cla()
     plt.clf()
 
 
 d = sampling()
-testing(code_length, d, "code_length")
-testing(word_count_any("define"), d, "wc_define")
-testing(word_count_any("using"), d, "wc_using")
-testing(word_count_any("define int long long"), d, "wc_define_int_long_long")
-testing(word_count_any("for"), d, "wc_for")
-testing(word_count_any_in_main("for"), d, "wc(main)_for")
-testing(word_count_any("if"), d, "wc_if")
-testing(word_count_any_in_main("if"), d, "wc(main)_if")
-testing(word_count_any("vector"), d, "wc_vector")
-testing(word_count_any_in_main("vector"), d, "wc(main)_vector")
-testing(word_count_any("rep"), d, "wc_rep")
-testing(word_count_any_in_main("rep"), d, "wc(main)_rep")
-testing(word_count_any("auto"), d, "wc_auto")
-testing(word_count_any_in_main("auto"), d, "wc(main)_auto")
+
+testing(d, code_length, "code_length")
+
+funcs_and_names = [
+    (word_count_any("define"), "wc_define"),
+    (word_count_any("using"), "wc_using"),
+    (word_count_any("define int long long"), "wc_define_int_long_long"),
+    (word_count_any("for"), "wc_for"),
+    (word_count_any("if"), "wc_if"),
+    (word_count_any("vector"), "wc_vector"),
+    (word_count_any("rep"), "wc_rep"),
+    (word_count_any("auto"), "wc_auto"),
+    (word_count_any_in_main("for"), "wc(main)_for"),
+    (word_count_any_in_main("if"), "wc(main)_if"),
+    (word_count_any_in_main("vector"), "wc(main)_vector"),
+    (word_count_any_in_main("rep"), "wc(main)_rep"),
+    (word_count_any_in_main("auto"), "wc(main)_auto"),
+]
+
+data_handle_funcs_and_names = [
+    (standardize, "standardize"),
+    (normalize, "normalize"),
+    (lambda x: x, "nothing"),
+]
+
+for (f, fn) in funcs_and_names:
+    for (hf, hfn) in data_handle_funcs_and_names:
+        testing(d, f, fn, hf, hfn)
