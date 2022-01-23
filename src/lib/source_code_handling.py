@@ -2,7 +2,7 @@ import re
 
 
 def extract_str_in_main(code: str) -> str:
-    cnt_main = len(re.findall(r" main *\( *\) *{", code))
+    cnt_main = len(re.findall(r" *main *\( *\)[ \n]*{", code))
     if cnt_main == 0:
         raise Exception("なんで main 関数がないんや")
     elif cnt_main > 1:
