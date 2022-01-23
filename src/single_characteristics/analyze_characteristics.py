@@ -9,19 +9,19 @@ from src.single_characteristics.extract_characteristics import *
 from matplotlib import pyplot as plt
 
 fan = [
-    (word_count_any("define"), "wc_define"),
-    (word_count_any("using"), "wc_using"),
-    (word_count_any("define int long long"), "wc_define_int_long_long"),
-    (word_count_any("for"), "wc_for"),
-    (word_count_any("if"), "wc_if"),
-    (word_count_any("vector"), "wc_vector"),
-    (word_count_any("rep"), "wc_rep"),
-    (word_count_any("auto"), "wc_auto"),
-    (word_count_any_in_main("for"), "wc(main)_for"),
-    (word_count_any_in_main("if"), "wc(main)_if"),
-    (word_count_any_in_main("vector"), "wc(main)_vector"),
-    (word_count_any_in_main("rep"), "wc(main)_rep"),
-    (word_count_any_in_main("auto"), "wc(main)_auto"),
+    (word_count_any_parallel("define"), "wc_define"),
+    (word_count_any_parallel("using"), "wc_using"),
+    (word_count_any_parallel("define int long long"), "wc_define_int_long_long"),
+    (word_count_any_parallel("for"), "wc_for"),
+    (word_count_any_parallel("if"), "wc_if"),
+    (word_count_any_parallel("vector"), "wc_vector"),
+    (word_count_any_parallel("rep"), "wc_rep"),
+    (word_count_any_parallel("auto"), "wc_auto"),
+    (word_count_any_in_main_parallel("for"), "wc(main)_for"),
+    (word_count_any_in_main_parallel("if"), "wc(main)_if"),
+    (word_count_any_in_main_parallel("vector"), "wc(main)_vector"),
+    (word_count_any_in_main_parallel("rep"), "wc(main)_rep"),
+    (word_count_any_in_main_parallel("auto"), "wc(main)_auto"),
 ]
 
 data_handle_funcs_and_names = [
