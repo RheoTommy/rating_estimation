@@ -14,17 +14,22 @@ def word_count_any(word: str) -> Callable[[List[Tuple[Submission, str]]], List[f
     return f
 
 
-def word_count_any_in_main(word: str) -> Callable[[List[Tuple[Submission, str]]], List[float]]:
+def word_count_any_in_main(word: str, do_print_errors: bool = False) -> Callable[
+    [List[Tuple[Submission, str]]], List[float]]:
     def f(dataset: List[Tuple[Submission, str]]) -> List[float]:
         res = []
+        error = 0
         for submission, code in dataset:
             code = exclude_comments(code)
             try:
                 res.append((extract_str_in_main(code)).count(word))
             except Exception as e:
-                print(e)
-                print("submission id: {}".format(submission.submission_id))
+                error += 1
                 res.append(0.0)
+                if do_print_errors:
+                    print(e)
+                    print("submission id: {}".format(submission.submission_id))
+        print("Error {}/{}".format(error, len(dataset)))
         return res
 
     return f
