@@ -41,6 +41,7 @@ def testing(dataset: List[Tuple[Submission, str]], func: Callable[[List[Tuple[Su
     plt.savefig("figs/{}_{}.pdf".format(data_handle_name, file_name))
     plt.cla()
     plt.clf()
+    print("finished testing on {}".format(file_name))
 
 
 d = sampling()
