@@ -81,7 +81,7 @@ def predict(model: RandomForestRegressor):
         features = func([source_code])
         x[func_name] = features
 
-    y = model.predict(x)
+    y = model.predict(x.values)
     print(y)
 
 
