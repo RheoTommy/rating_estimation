@@ -3,7 +3,7 @@ from typing import Callable, List, Tuple
 import numpy as np
 import pandas as pd
 
-from src.lib.data_handling import standardize, normalize
+from src.lib.data_handling import standardize, normalize, exclude_outliers
 from src.lib.submissions import with_source_codes, load_all_available_submissions
 from src.single_characteristics.extract_characteristics import *
 from matplotlib import pyplot as plt
@@ -26,8 +26,9 @@ def sampling() -> List[Tuple[Submission, str]]:
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
 def testing(dataset: List[Tuple[Submission, str]], func: Callable[[List[Tuple[Submission, str]]], List[float]],
             file_name: str, data_handle_func: Callable[[List[float]], List[float]] = standardize,
-            data_handle_name: str = "standardize"):
+            data_handle_name: str = "standardize", do_exclude_outliers=True, sigma=1):
     features = data_handle_func(func(dataset))
+    features = exclude_outliers(features, sigma)
     ratings = []
     for s in dataset:
         ratings.append(s[0].rating)
