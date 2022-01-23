@@ -29,7 +29,7 @@ def exclude_comments(code: str) -> str:
 
 
 def extract_str_in_main(code: str) -> str:
-    pattern = r"\bmain\b[ \r\n\t]*\(.*?\)[ \r\n\t]*(->int|-> int)*{"
+    pattern = r" \(*main\)*[ \r\n\t]*\(.*?\)[ \r\n\t]*(->int|-> int)*{"
     cnt_main = len(re.findall(pattern, code))
     if cnt_main == 0:
         raise Exception("なんで main 関数がないんや")
