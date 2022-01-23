@@ -4,9 +4,8 @@ import numpy as np
 import pandas as pd
 
 from src.lib.data_handling import standardize, normalize
-from src.lib.submissions import filtered_submissions, load_all_submissions, with_source_codes, \
-    load_all_available_submissions
-from src.single_characteristics.word_count import *
+from src.lib.submissions import with_source_codes, load_all_available_submissions
+from src.single_characteristics.extract_characteristics import *
 from matplotlib import pyplot as plt
 
 
