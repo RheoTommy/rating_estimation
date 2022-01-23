@@ -3,7 +3,7 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from src.lib.data_handling import standardize, normalize
+from src.lib.data_handling import standardize, normalize, exclude_outliers
 from src.lib.submissions import filtered_submissions, load_all_submissions, with_source_codes
 from src.single_characteristics.word_count import *
 from matplotlib import pyplot as plt
@@ -36,7 +36,7 @@ def sampling() -> List[Tuple[Submission, str]]:
 
 # func : (dataset: List[Tuple[Submission, str]]) -> (features: List[float])
 def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset: List[Tuple[Submission, str]],
-            file_name: str):
+            file_name: str, do_exclude_outliers=True, sigma=1):
     data_handle = ""
     if data_handle == "normalize":
         features = normalize(func(dataset))
@@ -45,6 +45,8 @@ def testing(func: Callable[[List[Tuple[Submission, str]]], List[float]], dataset
     else:
         data_handle = "nothing"
         features = func(dataset)
+    if do_exclude_outliers:
+        features = exclude_outliers(features, sigma)
     ratings = []
     for s in dataset:
         ratings.append(s[0].rating)
