@@ -1,10 +1,11 @@
-import numpy as np
+from typing import Tuple
+
 import pandas as pd
 import seaborn as sns
 from tqdm import tqdm
 
 from src.lib.data_handling import standardize, normalize, exclude_outliers, extract_specified_elements
-from src.lib.submissions import with_source_codes, load_all_available_submissions
+from src.lib.submissions import get_source_codes, load_all_available_submissions
 from src.single_characteristics.extract_characteristics import *
 from matplotlib import pyplot as plt
 
@@ -31,7 +32,7 @@ data_handle_funcs_and_names = [
 ]
 
 
-def sampling() -> List[Tuple[Submission, str]]:
+def sampling() -> Tuple[List[Submission], List[str]]:
     sample_size = 5000
     # 提出データのローカル保存が終わったら
     all_sub = load_all_available_submissions()
@@ -40,19 +41,19 @@ def sampling() -> List[Tuple[Submission, str]]:
     for i in idx:
         sample_sub.append(all_sub[i])
     print("start getting source codes")
-    res = with_source_codes(sample_sub)
+    source_codes = get_source_codes(sample_sub)
     print("finish getting source codes")
-    return res
+    return sample_sub, source_codes
 
 
 # func: [(Submission, str)]) -> (features: [float])
 # data_handle_func: [float] -> [float]
-def test_one_characteristic(dataset: List[Tuple[Submission, str]],
-                            func: Callable[[List[Tuple[Submission, str]]], List[float]],
+def test_one_characteristic(submissions: List[Submission], source_codes: List[str],
+                            func: Callable[[List[str]], List[float]],
                             file_name: str, data_handle_func: Callable[[List[float]], List[float]] = standardize,
                             data_handle_name: str = "standardize", do_exclude_outliers=True, sigma=2):
-    features = data_handle_func(func(dataset))
-    ratings = list(map(lambda x: x[0].rating, dataset))
+    features = data_handle_func(func(source_codes))
+    ratings = list(map(lambda submission: submission.rating, submissions))
     if do_exclude_outliers:
         mask = exclude_outliers(features, sigma)
         features = extract_specified_elements(features, mask)
@@ -69,14 +70,14 @@ def test_one_characteristic(dataset: List[Tuple[Submission, str]],
     print("finished testing characteristic {} (data_handle: {})".format(file_name, data_handle_name))
 
 
-def save_pair_plot(dataset: List[Tuple[Submission, str]],
+def save_pair_plot(submissions: List[Submission], source_codes: List[str],
                    funcs_and_names: List[Tuple[Callable[[List[Tuple[Submission, str]]], List[float]]]]):
     print("started testing all characteristics")
 
-    df = pd.DataFrame({"ratings": list(map(lambda t: t[0].rating, dataset))})
-    mask = [True for _ in range(len(dataset))]
+    df = pd.DataFrame({"ratings": list(map(lambda submission: submission.rating, submissions))})
+    mask = [True for _ in range(len(submissions))]
     for (func, func_name) in tqdm(funcs_and_names):
-        features = func(dataset)
+        features = func(source_codes)
         mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_outliers(features, 2))))
         df[func_name] = features
     df = df[mask]
@@ -92,12 +93,14 @@ def save_pair_plot(dataset: List[Tuple[Submission, str]],
 
 
 def test_characteristics():
-    dataset = sampling()
+    submissions, source_codes = sampling()
 
-    save_pair_plot(dataset, fan)
+    save_pair_plot(submissions, source_codes, fan)
 
-    test_one_characteristic(dataset, code_length, "code_length")
+    test_one_characteristic(submissions, source_codes, code_length, "code_length")
 
     for (f, fn) in fan:
         for (hf, hfn) in data_handle_funcs_and_names:
-            test_one_characteristic(dataset, f, fn, hf, hfn)
+            test_one_characteristic(submissions, source_codes, f, fn, hf, hfn)
+
+    print("all processes finished")

@@ -57,23 +57,23 @@ def save_all_submissions(submissions: List[Submission]):
 
 
 # [submission] -> [(submission, source_code)]
-def with_source_codes(submissions: List[Submission]) -> List[Tuple[Submission, str]]:
-    def f(submission: Submission) -> Tuple[Submission, str]:
+def get_source_codes(submissions: List[Submission]) -> List[str]:
+    def f(submission: Submission) -> str:
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             with open("source_codes/{}.cpp".format(submission.submission_id), "rb") as fi:
                 code = fi.read().decode()
-                return submission, code
+                return code
 
         time.sleep(0.25)
         try:
             source_code = get_source_code(submission.contest_id, submission.submission_id)
         except Exception as e:
             print(e)
-            return submission, ""
+            return ""
         else:
-            return submission, source_code
+            return source_code
 
-    return list(filter(lambda t: t[1] != "", map(f, tqdm(submissions))))
+    return list(map(f, tqdm(submissions)))
 
 
 def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
