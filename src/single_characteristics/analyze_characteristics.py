@@ -10,7 +10,6 @@ from src.single_characteristics.extract_characteristics import *
 from matplotlib import pyplot as plt
 
 fan = [
-    (code_length, "code_length"),
     (word_count_any_parallel("define"), "wc_define"),
     (word_count_any_parallel("using"), "wc_using"),
     (word_count_any_parallel("define int long long"), "wc_define_int_long_long"),
