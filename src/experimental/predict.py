@@ -26,7 +26,8 @@ def create_and_train_model() -> RandomForestRegressor:
     x = pd.DataFrame()
     mask = [True for _ in range(len(source_codes))]
     for (func, func_name) in fan:
-        features = func(tqdm(source_codes, desc=func_name))
+        tqdm.write("processing: {}".format(func_name))
+        features = func(tqdm(source_codes))
         mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_outliers(features, 2))))
         x[func_name] = features
     x = x[mask]
