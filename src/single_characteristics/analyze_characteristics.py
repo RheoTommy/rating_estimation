@@ -57,14 +57,14 @@ def sampling() -> Tuple[List[Submission], List[str]]:
 # func: [(Submission, str)]) -> (features: [float])
 # data_handle_func: [float] -> [float]
 def test_one_characteristic(
-        submissions: List[Submission],
-        source_codes: List[str],
-        func: Callable[[List[str]], List[float]],
-        file_name: str,
-        data_handle_func: Callable[[List[float]], List[float]] = standardize,
-        data_handle_name: str = "standardize",
-        do_exclude_outliers: bool = True,
-        sigma: float = 2,
+    submissions: List[Submission],
+    source_codes: List[str],
+    func: Callable[[List[str]], List[float]],
+    file_name: str,
+    data_handle_func: Callable[[List[float]], List[float]] = standardize,
+    data_handle_name: str = "standardize",
+    do_exclude_outliers: bool = True,
+    sigma: float = 2,
 ):
     features = data_handle_func(func(source_codes))
     ratings = list(map(lambda submission: submission.rating, submissions))
@@ -93,10 +93,10 @@ def test_one_characteristic(
 
 
 def save_pair_plot(
-        submissions: List[Submission],
-        source_codes: List[str],
-        funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str]],
-        png_file_name: str = "pair_plot",
+    submissions: List[Submission],
+    source_codes: List[str],
+    funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str]],
+    png_file_name: str = "pair_plot",
 ):
     print("started testing all characteristics")
 
