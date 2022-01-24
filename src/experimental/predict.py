@@ -13,8 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
-from src.lib.data_handling import exclude_outliers
-from src.lib.submissions import get_source_codes, load_all_available_submissions, Submission
+from src.lib.data_handling import exclude_nan
+from src.lib.submissions import get_source_codes, load_all_available_submissions
 from src.single_characteristics.analyze_characteristics import fan
 
 
@@ -28,7 +28,7 @@ def create_and_train_model() -> RandomForestRegressor:
     for (func, func_name) in fan:
         tqdm.write("processing: {}".format(func_name))
         features = func(tqdm(source_codes))
-        mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_outliers(features, 2))))
+        mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_nan(features))))
         x[func_name] = features
     x = x[mask]
 
