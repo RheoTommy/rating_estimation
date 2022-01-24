@@ -24,6 +24,8 @@ fan = [
     (word_count_any_in_main_parallel("vector"), "wc(main)_vector"),
     (word_count_any_in_main_parallel("rep"), "wc(main)_rep"),
     (word_count_any_in_main_parallel("auto"), "wc(main)_auto"),
+    (code_length, "code_length"),
+    (comments_ratio, "comments_ratio")
 ]
 
 data_handle_funcs_and_names = [
@@ -52,7 +54,7 @@ def sampling() -> Tuple[List[Submission], List[str]]:
 def test_one_characteristic(submissions: List[Submission], source_codes: List[str],
                             func: Callable[[List[str]], List[float]],
                             file_name: str, data_handle_func: Callable[[List[float]], List[float]] = standardize,
-                            data_handle_name: str = "standardize", do_exclude_outliers=True, sigma=2):
+                            data_handle_name: str = "standardize", do_exclude_outliers: bool = True, sigma: float = 2):
     features = data_handle_func(func(source_codes))
     ratings = list(map(lambda submission: submission.rating, submissions))
     if do_exclude_outliers:
@@ -97,8 +99,6 @@ def test_characteristics():
     submissions, source_codes = sampling()
 
     save_pair_plot(submissions, source_codes, fan)
-
-    test_one_characteristic(submissions, source_codes, code_length, "code_length")
 
     for (f, fn) in fan:
         for (hf, hfn) in data_handle_funcs_and_names:
