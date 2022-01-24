@@ -75,3 +75,12 @@ def word_count_any_in_main_parallel(word: str, do_print_errors: bool = False) ->
 
 def code_length(source_codes: List[str]) -> List[float]:
     return list(map(len, source_codes))
+
+
+def comments_ratio(source_codes: List[str]) -> List[float]:
+    def f(code: str) -> float:
+        ori = len(code)
+        com = ori - len(exclude_comments(code))
+        return com / ori
+
+    return list(map(f, source_codes))
