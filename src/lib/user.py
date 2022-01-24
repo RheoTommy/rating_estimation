@@ -10,13 +10,15 @@ from tqdm import tqdm
 def get_rating(queries: List[Tuple[str, int]]) -> List[int]:
     ratings = []
     history_dict = load_all_user_histories()
-    print("processing queries in \"get_rating\"")
+    print('processing queries in "get_rating"')
     for (user_id, epoch_second) in tqdm(queries):
         ratings.append(get_rating_query(user_id, epoch_second, history_dict))
     return ratings
 
 
-def get_rating_query(user_id: str, epoch_second: int, history_dict: Dict[str, List[Tuple[int, int]]]) -> int:
+def get_rating_query(
+    user_id: str, epoch_second: int, history_dict: Dict[str, List[Tuple[int, int]]]
+) -> int:
     history = history_dict[user_id]
     return get_rating_from_history(epoch_second, history)
 
@@ -42,7 +44,11 @@ def get_user_history(user_id: str) -> List[Tuple[int, int]]:
             res.append((rating, end_epoch_time))
         return res
     else:
-        raise Exception("bad request while getting user history: {} (user_id: {})".format(r.reason, user_id))
+        raise Exception(
+            "bad request while getting user history: {} (user_id: {})".format(
+                r.reason, user_id
+            )
+        )
 
 
 def save_all_user_histories(user_histories: Dict[str, List[Tuple[int, int]]]):

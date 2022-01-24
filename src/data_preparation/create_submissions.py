@@ -11,29 +11,31 @@ from src.lib.user import get_rating
 
 
 def convert_csv_to_submissions(df: DataFrame) -> List[Submission]:
-    print("extracting \"id\" column")
+    print('extracting "id" column')
     submission_id_list = df["id"].to_numpy(dtype="int64").tolist()
-    print("extracting \"epoch_second\" column")
+    print('extracting "epoch_second" column')
     epoch_second_list = df["epoch_second"].to_numpy(dtype="int64").tolist()
-    print("extracting \"problem_id\" column")
+    print('extracting "problem_id" column')
     problem_id_list = df["problem_id"].to_numpy(dtype="str").tolist()
-    print("extracting \"contest_id\" column")
+    print('extracting "contest_id" column')
     contest_id_list = df["contest_id"].to_numpy(dtype="str").tolist()
-    print("extracting \"user_id\" column")
+    print('extracting "user_id" column')
     user_id_list = df["user_id"].to_numpy(dtype="str").tolist()
-    print("extracting \"result\" column")
-    is_ac_list = np.vectorize(lambda res: res == "AC")(df["result"].to_numpy(dtype="str")).tolist()
+    print('extracting "result" column')
+    is_ac_list = np.vectorize(lambda res: res == "AC")(
+        df["result"].to_numpy(dtype="str")
+    ).tolist()
 
     is_during_contest_queries = list(zip(contest_id_list, epoch_second_list))
     get_difficulty_queries = problem_id_list
     get_rating_queries = list(zip(user_id_list, epoch_second_list))
 
-    print("getting \"during contest\"")
+    print('getting "during contest"')
     during_contest_list = is_during_contest(is_during_contest_queries)
-    print("getting \"difficulty\"")
+    print('getting "difficulty"')
     difficulty_queries_list = get_difficulty(get_difficulty_queries)
 
-    print("getting \"rating\"")
+    print('getting "rating"')
     rating_list = get_rating(get_rating_queries)
 
     submissions = []
@@ -49,7 +51,7 @@ def convert_csv_to_submissions(df: DataFrame) -> List[Submission]:
                 is_ac_list[i],
                 during_contest_list[i],
                 difficulty_queries_list[i],
-                rating_list[i]
+                rating_list[i],
             )
         )
     return submissions

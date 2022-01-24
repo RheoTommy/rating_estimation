@@ -11,7 +11,9 @@ def is_during_contest(queries: List[Tuple[str, int]]) -> List[bool]:
         json_dist = json.load(f)
         for contest in json_dist:
             contest_id = str(contest["id"])
-            end_second = int(contest["start_epoch_second"]) + int(contest["duration_second"])
+            end_second = int(contest["start_epoch_second"]) + int(
+                contest["duration_second"]
+            )
             dc[contest_id] = end_second
 
     res = []
