@@ -10,7 +10,9 @@ def source_code_extractor(html: str) -> str:
 
 
 def create_submission_url(contest_id: str, submission_id: int) -> str:
-    return "https://atcoder.jp/contests/{}/submissions/{}".format(contest_id, submission_id)
+    return "https://atcoder.jp/contests/{}/submissions/{}".format(
+        contest_id, submission_id
+    )
 
 
 def get_source_code(contest_id: str, submission_id: int) -> str:
@@ -22,4 +24,7 @@ def get_source_code(contest_id: str, submission_id: int) -> str:
         return s
     else:
         raise Exception(
-            "bad request: {} (contest_id: {}, submission_id: {})".format(r.reason, contest_id, submission_id))
+            "bad request: {} (contest_id: {}, submission_id: {})".format(
+                r.reason, contest_id, submission_id
+            )
+        )

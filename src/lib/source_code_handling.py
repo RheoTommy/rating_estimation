@@ -6,17 +6,17 @@ def exclude_comments(code: str) -> str:
     res = ""
     it = 0
     while it < sz:
-        if it < sz - 1 and code[it:it + 2] == "//":
+        if it < sz - 1 and code[it : it + 2] == "//":
             next_it = sz
             for j in range(it + 2, sz):
-                if code[j] == '\n' or code[j] == '\r':
+                if code[j] == "\n" or code[j] == "\r":
                     next_it = j + 1
                     break
             it = next_it
-        elif it < sz - 1 and code[it:it + 2] == "/*":
+        elif it < sz - 1 and code[it : it + 2] == "/*":
             next_it = -1
             for j in range(it + 2, sz - 1):
-                if code[j:j + 2] == "*/":
+                if code[j : j + 2] == "*/":
                     next_it = j + 2
                     break
             if next_it == -1:
@@ -42,9 +42,9 @@ def extract_str_in_main(code: str) -> str:
         if end == len(code):
             raise Exception("main 関数の終わりが見つからねえ！")
         ch = code[end]
-        if ch == '{':
+        if ch == "{":
             now += 1
-        elif ch == '}':
+        elif ch == "}":
             now -= 1
         if now == 0:
             break

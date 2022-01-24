@@ -4,7 +4,12 @@ import pandas as pd
 import seaborn as sns
 from tqdm import tqdm
 
-from src.lib.data_handling import standardize, normalize, exclude_outliers, extract_specified_elements
+from src.lib.data_handling import (
+    standardize,
+    normalize,
+    exclude_outliers,
+    extract_specified_elements,
+)
 from src.lib.submissions import get_source_codes, load_all_available_submissions
 from src.single_characteristics.extract_characteristics import *
 from matplotlib import pyplot as plt
@@ -24,7 +29,8 @@ fan = [
     (word_count_any_in_main_parallel("rep"), "wc(main)_rep"),
     (word_count_any_in_main_parallel("auto"), "wc(main)_auto"),
     (code_length, "code_length"),
-    (comments_ratio, "comments_ratio")
+    (code_length_in_main, "code_length_in_main"),
+    (comments_ratio, "comments_ratio"),
 ]
 
 data_handle_funcs_and_names = [
@@ -50,10 +56,16 @@ def sampling() -> Tuple[List[Submission], List[str]]:
 
 # func: [(Submission, str)]) -> (features: [float])
 # data_handle_func: [float] -> [float]
-def test_one_characteristic(submissions: List[Submission], source_codes: List[str],
-                            func: Callable[[List[str]], List[float]],
-                            file_name: str, data_handle_func: Callable[[List[float]], List[float]] = standardize,
-                            data_handle_name: str = "standardize", do_exclude_outliers: bool = True, sigma: float = 2):
+def test_one_characteristic(
+    submissions: List[Submission],
+    source_codes: List[str],
+    func: Callable[[List[str]], List[float]],
+    file_name: str,
+    data_handle_func: Callable[[List[float]], List[float]] = standardize,
+    data_handle_name: str = "standardize",
+    do_exclude_outliers: bool = True,
+    sigma: float = 2,
+):
     features = data_handle_func(func(source_codes))
     ratings = list(map(lambda submission: submission.rating, submissions))
     if do_exclude_outliers:
@@ -61,7 +73,11 @@ def test_one_characteristic(submissions: List[Submission], source_codes: List[st
         features = extract_specified_elements(features, mask)
         ratings = extract_specified_elements(ratings, mask)
     # 統計処理をする(相関とか)
-    plt.scatter(features, ratings, label="R: {}".format(pd.Series(features).corr(pd.Series(ratings))))
+    plt.scatter(
+        features,
+        ratings,
+        label="R: {}".format(pd.Series(features).corr(pd.Series(ratings))),
+    )
     plt.legend(loc="best")
     plt.xlabel("features")
     plt.ylabel("ratings")
@@ -69,25 +85,37 @@ def test_one_characteristic(submissions: List[Submission], source_codes: List[st
     plt.cla()
     plt.clf()
 
-    print("finished testing characteristic {} (data_handle: {})".format(file_name, data_handle_name))
+    print(
+        "finished testing characteristic {} (data_handle: {})".format(
+            file_name, data_handle_name
+        )
+    )
 
 
-def save_pair_plot(submissions: List[Submission], source_codes: List[str],
-                   funcs_and_names: List[Tuple[Callable[[List[Tuple[Submission, str]]], List[float]]]]):
+def save_pair_plot(
+    submissions: List[Submission],
+    source_codes: List[str],
+    funcs_and_names: List[Tuple[Callable[[List[Tuple[Submission, str]]], List[float]]]],
+    png_file_name: str = "pair_plot",
+):
     print("started testing all characteristics")
 
-    df = pd.DataFrame({"ratings": list(map(lambda submission: submission.rating, submissions))})
+    df = pd.DataFrame(
+        {"ratings": list(map(lambda submission: submission.rating, submissions))}
+    )
     mask = [True for _ in range(len(submissions))]
     for (func, func_name) in tqdm(funcs_and_names):
         features = func(source_codes)
-        mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_outliers(features, 2))))
+        mask = list(
+            map(lambda t: t[0] and t[1], zip(mask, exclude_outliers(features, 2)))
+        )
         df[func_name] = features
     df = df[mask]
 
     print(df.corr())
 
     sns.pairplot(df)
-    plt.savefig("figs/pair_plot.png")
+    plt.savefig("figs/{}.png".format(png_file_name))
     plt.clf()
     plt.cla()
 
