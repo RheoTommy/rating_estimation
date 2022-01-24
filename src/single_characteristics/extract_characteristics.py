@@ -64,13 +64,13 @@ def word_count_any_in_main_parallel(word: str, do_print_errors: bool = False) ->
                     print(e)
                 return np.nan
 
-        return Parallel(n_jobs=-1)(delayed(sub_f)(source_code) for source_code in source_codes)
+        return Parallel(n_jobs=-1)(delayed(sub_f)(code) for code in source_codes)
 
     return f
 
 
 def code_length(source_codes: List[str]) -> List[float]:
-    return list(map(len, source_codes))
+    return Parallel(n_jobs=-1)(delayed(len)(code) for code in source_codes)
 
 
 def comments_ratio(source_codes: List[str]) -> List[float]:
@@ -79,4 +79,4 @@ def comments_ratio(source_codes: List[str]) -> List[float]:
         com = ori - len(exclude_comments(code))
         return com / ori
 
-    return list(map(f, source_codes))
+    return Parallel(n_jobs=-1)(delayed(f)(code) for code in source_codes)

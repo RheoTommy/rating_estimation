@@ -15,13 +15,16 @@ def standardize(data: List[float]) -> List[float]:
     return list(map(lambda d: (d - mean) / std, data))
 
 
-# NaN を除外し，
 # sigma = k として，[m - kσ, m + kσ] の範囲にあるかどうかの Bool 配列を返す（m : 平均, σ : 標準偏差）
 def exclude_outliers(data: List[float], sigma: float) -> List[bool]:
     mean = np.nanmean(data)
     std = np.nanstd(data)
-    return [not np.isnan(data[i]) and mean - sigma * std <= data[i] <= mean + sigma * std for i in
-            range(0, len(data))]
+    return [not np.isnan(d) and mean - sigma * std <= d <= mean + sigma * std for d in data]
+
+
+# NaN を除外する
+def exclude_nan(data: List[float]) -> List[bool]:
+    return [not np.isnan(d) for d in data]
 
 
 T = TypeVar('T')
