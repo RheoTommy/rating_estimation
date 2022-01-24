@@ -104,3 +104,6 @@ def test_characteristics():
             test_one_characteristic(submissions, source_codes, f, fn, hf, hfn)
 
     print("all processes finished")
+
+
+test_characteristics()
