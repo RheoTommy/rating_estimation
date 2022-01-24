@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 
 import requests
-import tqdm
+from tqdm import tqdm
 
 
 # [(user_id, epoch_second)] -> [rating]
@@ -11,7 +11,7 @@ def get_rating(queries: List[Tuple[str, int]]) -> List[int]:
     ratings = []
     history_dict = load_all_user_histories()
     print("processing queries in \"get_rating\"")
-    for (user_id, epoch_second) in tqdm.tqdm(queries):
+    for (user_id, epoch_second) in tqdm(queries):
         ratings.append(get_rating_query(user_id, epoch_second, history_dict))
     return ratings
 
