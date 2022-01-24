@@ -52,23 +52,19 @@ def word_count_any_parallel(word: str) -> Callable[[List[str]], List[float]]:
     return f
 
 
+# 多分 source_codes には [str] じゃなくて tqdm[str] が送られるので添え字アクセスすると死ぬ
 def word_count_any_in_main_parallel(word: str, do_print_errors: bool = False) -> Callable[[List[str]], List[float]]:
-    def f(source_codes: List[str], submissions: List[Submission] = None) -> List[float]:
-        def sub_f(code: str, submission: Submission = None) -> float:
+    def f(source_codes: List[str]) -> List[float]:
+        def sub_f(code: str) -> float:
             code = exclude_comments(code)
             try:
                 return extract_str_in_main(code).count(word)
             except Exception as e:
                 if do_print_errors:
                     print(e)
-                    if not (submissions is None):
-                        print("submission id: {}".format(submission.submission_id))
                 return np.nan
 
-        return Parallel(n_jobs=-1)(
-            delayed(sub_f)(source_codes[i], None if submissions is None else submissions[i])
-            for i in range(len(source_codes))
-        )
+        return Parallel(n_jobs=-1)(delayed(sub_f)(source_code) for source_code in source_codes)
 
     return f
 
