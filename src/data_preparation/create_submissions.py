@@ -7,7 +7,7 @@ from pandas import DataFrame
 
 from src.lib.problems import get_difficulty, is_during_contest
 from src.lib.submissions import Submission, save_all_submissions
-from src.lib.user import get_rating
+from src.data_preparation.get_user_histories import get_rating
 
 
 def convert_csv_to_submissions(df: DataFrame) -> List[Submission]:
@@ -62,8 +62,3 @@ def create_submissions():
     df = pd.read_csv(file_name)
     submissions = convert_csv_to_submissions(df)
     save_all_submissions(submissions)
-    for i in range(min(10, len(submissions))):
-        print(submissions[i])
-
-
-create_submissions()

@@ -28,9 +28,4 @@ def extract_csv():
             ]
         )
 
-    print(df.head())
-
     df.to_csv("csv/extract.csv", index=False)
-
-
-extract_csv()

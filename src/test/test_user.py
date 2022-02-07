@@ -1,4 +1,4 @@
-from src.lib.user import iso_time_to_epoch_second, get_rating
+from src.data_preparation.get_user_histories import get_rating, iso_time_to_epoch_second
 
 
 def test_iso_time_to_epoch_second():
