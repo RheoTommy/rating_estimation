@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 from tqdm import tqdm
 
-from src.lib.extract_html import get_source_code
+from src.data_preparation.get_source_codes import get_source_code
 
 
 class Submission:
