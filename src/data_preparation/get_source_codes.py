@@ -1,15 +1,55 @@
 import os.path
 import time
+from typing import List
+
+import requests
+from bs4 import BeautifulSoup
 
 from tqdm import tqdm
 
-from src.lib.extract_html import get_source_code
 from src.lib.submissions import (
     load_all_submissions,
-    extract_available_submissions,
-    save_all_available_submissions,
-    filtered_submissions,
+    Submission,
 )
+
+
+def source_code_extractor(html: str) -> str:
+    soup = BeautifulSoup(html, "lxml")
+    dom = soup.find_all(id="submission-code")
+    assert len(dom) == 1
+    return dom[0].text
+
+
+def create_submission_url(contest_id: str, submission_id: int) -> str:
+    return "https://atcoder.jp/contests/{}/submissions/{}".format(
+        contest_id, submission_id
+    )
+
+
+def get_source_code(contest_id: str, submission_id: int) -> str:
+    url = create_submission_url(contest_id, submission_id)
+    r = requests.get(url)
+    if r.ok:
+        s = r.text
+        s = source_code_extractor(s)
+        return s
+    else:
+        raise Exception(
+            "bad request: {} (contest_id: {}, submission_id: {})".format(
+                r.reason, contest_id, submission_id
+            )
+        )
+
+
+def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
+    return list(
+        filter(
+            lambda submission: submission.during_contest
+            and submission.is_ac
+            and 400 <= submission.difficulty,
+            submissions,
+        )
+    )
 
 
 def get_all_source_codes():
@@ -32,9 +72,3 @@ def get_all_source_codes():
                 tqdm.write(e)
             else:
                 break
-
-
-get_all_source_codes()
-subs = load_all_submissions()
-subs = extract_available_submissions(subs)
-save_all_available_submissions(subs)

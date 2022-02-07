@@ -16,6 +16,7 @@ def standardize(data: List[float]) -> List[float]:
 
 
 # sigma = k として，[m - kσ, m + kσ] の範囲にあるかどうかの Bool 配列を返す（m : 平均, σ : 標準偏差）
+# NaN も除外される
 def exclude_outliers(data: List[float], sigma: float) -> List[bool]:
     mean = np.nanmean(data)
     std = np.nanstd(data)
