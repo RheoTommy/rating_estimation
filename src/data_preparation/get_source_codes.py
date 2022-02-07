@@ -45,8 +45,8 @@ def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
     return list(
         filter(
             lambda submission: submission.during_contest
-                               and submission.is_ac
-                               and 400 <= submission.difficulty,
+            and submission.is_ac
+            and 400 <= submission.difficulty,
             submissions,
         )
     )
@@ -65,7 +65,7 @@ def get_all_source_codes():
                     submission.contest_id, submission.submission_id
                 )
                 with open(
-                        "source_codes/{}.cpp".format(submission.submission_id), "wb"
+                    "source_codes/{}.cpp".format(submission.submission_id), "wb"
                 ) as f:
                     f.write(source_code.encode())
             except Exception as e:

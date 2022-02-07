@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from src.lib.data_handling import exclude_nan
 from src.lib.submissions import get_source_codes, load_all_available_submissions
-from src.single_characteristics.analyze_characteristics import fan
+from src.single_characteristics.analyze_characteristics import characteristics
 
 
 def create_and_train_model() -> RandomForestRegressor:
@@ -36,7 +36,7 @@ def create_and_train_model() -> RandomForestRegressor:
     tqdm.write("preparing train data...")
     x = pd.DataFrame()
     mask = [True for _ in range(len(source_codes))]
-    for (func, func_name) in fan:
+    for (func, func_name) in characteristics:
         tqdm.write("processing: {}".format(func_name))
         features = func(tqdm(source_codes))
         mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_nan(features))))
@@ -79,7 +79,7 @@ def create_and_train_model() -> RandomForestRegressor:
     plt.clf()
 
     forest_importance = pd.Series(
-        rf.feature_importances_, index=list(map(lambda t: t[1], fan))
+        rf.feature_importances_, index=list(map(lambda t: t[1], characteristics))
     )
 
     fig, ax = plt.subplots()
@@ -106,7 +106,7 @@ def predict(model: RandomForestRegressor):
     print("input your source code here")
     source_code = reduce(lambda s, t: s + t, sys.stdin.readlines(), " ")
     x = pandas.DataFrame()
-    for (func, func_name) in fan:
+    for (func, func_name) in characteristics:
         features = func([source_code])
         x[func_name] = features
 

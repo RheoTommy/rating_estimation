@@ -1,5 +1,6 @@
 from src.lib.submissions import load_all_available_submissions, get_source_codes
-from src.single_characteristics.analyze_characteristics import save_pair_plot, fan
+from src.single_characteristics.analyze_characteristics import characteristics
+from src.bin.visualize_characteristics import save_pair_plot
 
 all_sub = load_all_available_submissions()
 users = list(map(lambda submission: submission.user_id, all_sub))
