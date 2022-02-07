@@ -1,15 +1,27 @@
 import os.path
 
 # submissions.csv から extract.csv を作成
+from typing import List
+
+from tqdm import tqdm
+
 from src.data_preparation.create_submissions import create_submissions
 from src.data_preparation.extract_csv import extract_csv
 from src.data_preparation.get_source_codes import get_all_source_codes
 from src.data_preparation.get_user_histories import get_all_user_histories
 from src.lib.submissions import (
     load_all_submissions,
-    extract_available_submissions,
     save_all_available_submissions,
+    Submission,
 )
+
+
+def extract_available_submissions(submissions: List[Submission]) -> List[Submission]:
+    def f(submission: Submission) -> bool:
+        return os.path.isfile("source_codes/{}.cpp".format(submission.submission_id))
+
+    return list(filter(f, tqdm(submissions)))
+
 
 print("Make sure that these directories exist: [csv, json, pickle, source_codes]")
 

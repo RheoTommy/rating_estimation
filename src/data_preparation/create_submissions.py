@@ -1,13 +1,43 @@
-from typing import List
+import json
+from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from pandas import DataFrame
 
-from src.lib.problems import get_difficulty, is_during_contest
 from src.lib.submissions import Submission, save_all_submissions
 from src.data_preparation.get_user_histories import get_rating
+
+
+# [(contest_id, epoch_second)] -> [during_contest?]
+def is_during_contest(queries: List[Tuple[str, int]]) -> List[bool]:
+    dc = {}
+
+    with open("json/contests.json", "rb") as f:
+        json_dist = json.load(f)
+        for contest in json_dist:
+            contest_id = str(contest["id"])
+            end_second = int(contest["start_epoch_second"]) + int(
+                contest["duration_second"]
+            )
+            dc[contest_id] = end_second
+
+    res = []
+    for contest_id, epoch_second in queries:
+        res.append(epoch_second < dc[contest_id])
+
+    return res
+
+
+# [problem_id] -> [difficulty]
+def get_difficulty(queries: List[str]) -> List[int]:
+    with open("json/problem-models.json", "rb") as f:
+        json_dist = json.load(f)
+        res = []
+        for problem_id in queries:
+            res.append(json_dist[problem_id].get("difficulty", 5000))
+        return res
 
 
 def convert_csv_to_submissions(df: DataFrame) -> List[Submission]:

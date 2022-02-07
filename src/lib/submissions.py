@@ -1,7 +1,7 @@
 import os.path
 import pickle
 import time
-from typing import List, Tuple
+from typing import List
 
 from tqdm import tqdm
 
@@ -88,24 +88,6 @@ def get_source_codes(submissions: List[Submission]) -> List[str]:
             return source_code
 
     return list(map(f, tqdm(submissions)))
-
-
-def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
-    return list(
-        filter(
-            lambda submission: submission.during_contest
-            and submission.is_ac
-            and 400 <= submission.difficulty,
-            submissions,
-        )
-    )
-
-
-def extract_available_submissions(submissions: List[Submission]) -> List[Submission]:
-    def f(submission: Submission) -> bool:
-        return os.path.isfile("source_codes/{}.cpp".format(submission.submission_id))
-
-    return list(filter(f, tqdm(submissions)))
 
 
 def load_all_available_submissions() -> List[Submission]:

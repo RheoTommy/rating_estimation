@@ -1,5 +1,6 @@
 import os.path
 import time
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
@@ -8,7 +9,7 @@ from tqdm import tqdm
 
 from src.lib.submissions import (
     load_all_submissions,
-    filtered_submissions,
+    Submission,
 )
 
 
@@ -40,6 +41,17 @@ def get_source_code(contest_id: str, submission_id: int) -> str:
         )
 
 
+def filtered_submissions(submissions: List[Submission]) -> List[Submission]:
+    return list(
+        filter(
+            lambda submission: submission.during_contest
+                               and submission.is_ac
+                               and 400 <= submission.difficulty,
+            submissions,
+        )
+    )
+
+
 def get_all_source_codes():
     submissions = load_all_submissions()
     submissions = filtered_submissions(submissions)
@@ -53,7 +65,7 @@ def get_all_source_codes():
                     submission.contest_id, submission.submission_id
                 )
                 with open(
-                    "source_codes/{}.cpp".format(submission.submission_id), "wb"
+                        "source_codes/{}.cpp".format(submission.submission_id), "wb"
                 ) as f:
                     f.write(source_code.encode())
             except Exception as e:
