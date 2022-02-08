@@ -48,7 +48,7 @@ def word_count_any_parallel(word: str) -> Callable[[List[str]], List[float]]:
             code = exclude_comments(code)
             return code.count(word)
 
-        return Parallel(n_jobs=-1)(delayed(sub_f)(t) for t in source_codes)
+        return Parallel(n_jobs=-1)(delayed(sub_f)(code) for code in source_codes)
 
     return f
 

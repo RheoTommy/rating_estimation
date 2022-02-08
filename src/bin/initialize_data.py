@@ -1,6 +1,5 @@
 import os.path
 
-# submissions.csv から extract.csv を作成
 from typing import List
 
 from tqdm import tqdm
@@ -16,6 +15,7 @@ from src.lib.submissions import (
 )
 
 
+# submissions.csv から extract.csv を作成
 def extract_available_submissions(submissions: List[Submission]) -> List[Submission]:
     def f(submission: Submission) -> bool:
         return os.path.isfile("source_codes/{}.cpp".format(submission.submission_id))
