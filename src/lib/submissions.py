@@ -1,11 +1,8 @@
 import os.path
 import pickle
-import time
 from typing import List
 
 from tqdm import tqdm
-
-from src.data_preparation.get_source_codes import get_source_code
 
 
 class Submission:
@@ -76,16 +73,7 @@ def get_source_codes(submissions: List[Submission]) -> List[str]:
                 code = fi.read().decode()
                 return code
 
-        time.sleep(0.25)
-        try:
-            source_code = get_source_code(
-                submission.contest_id, submission.submission_id
-            )
-        except Exception as e:
-            print(e)
-            return ""
-        else:
-            return source_code
+        raise Exception("ソースコードがローカルにありません！")
 
     return list(map(f, tqdm(submissions)))
 

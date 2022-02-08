@@ -7,10 +7,7 @@ from bs4 import BeautifulSoup
 
 from tqdm import tqdm
 
-from src.lib.submissions import (
-    load_all_submissions,
-    Submission,
-)
+from src.lib.submissions import Submission, load_all_submissions
 
 
 def source_code_extractor(html: str) -> str:
