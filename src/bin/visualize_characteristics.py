@@ -97,6 +97,8 @@ def visualize_one_characteristic(
     plt.cla()
     plt.clf()
 
+    print("{}({}), R: {}".format(file_name, data_handle_name, pd.Series(features).corr(pd.Series(ratings))))
+
     print(
         "finished testing characteristic {} (data_handle: {})".format(
             file_name, data_handle_name
@@ -107,7 +109,7 @@ def visualize_one_characteristic(
 def visualize_characteristics():
     submissions, source_codes = sampling()
 
-    save_pair_plot(submissions, source_codes, characteristics)
+    # save_pair_plot(submissions, source_codes, characteristics)
 
     for (f, fn) in characteristics:
         for (hf, hfn) in data_handle_funcs_and_names:

@@ -4,6 +4,7 @@ from typing import List
 
 from tqdm import tqdm
 
+from src.data_preparation.compile import prepare_assemblers, prepare_pps
 from src.data_preparation.create_submissions import create_submissions
 from src.data_preparation.extract_csv import extract_csv
 from src.data_preparation.get_source_codes import get_all_source_codes
@@ -11,7 +12,7 @@ from src.data_preparation.get_user_histories import get_all_user_histories
 from src.lib.submissions import (
     load_all_submissions,
     save_all_available_submissions,
-    Submission,
+    Submission, load_all_available_submissions,
 )
 
 
@@ -59,3 +60,8 @@ if not os.path.exists("pickle/available_submissions.pickle"):
     subs = load_all_submissions()
     subs = extract_available_submissions(subs)
     save_all_available_submissions(subs)
+
+# コンパイル作業
+subs = load_all_available_submissions()
+prepare_assemblers(subs)
+prepare_pps(subs)

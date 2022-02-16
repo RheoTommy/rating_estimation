@@ -33,8 +33,3 @@ def prepare_pps(submissions: List[Submission]):
             assert res == 0
 
     Parallel(n_jobs=-1)(delayed(f)(s) for s in tqdm(submissions))
-
-
-sub = load_all_available_submissions()
-# prepare_assemblers(sub)
-prepare_pps(sub)
