@@ -12,4 +12,5 @@ RUN apt-add-repository ppa:ubuntu-toolchain-r/test; apt update; apt install -y g
     && tar xf boost_1_71_0.tar.bz2 \
     && cd boost_1_71_0 \
     && ./bootstrap.sh --prefix=/opt/boost/gcc \
-    && ./b2 install 
+    && ./b2 install \
+    && git clone https://github.com/atcoder/ac-library.git /opt/ac-library
