@@ -16,7 +16,6 @@ from src.lib.submissions import (
 )
 
 
-# submissions.csv から extract.csv を作成
 def extract_available_submissions(submissions: List[Submission]) -> List[Submission]:
     def f(submission: Submission) -> bool:
         return os.path.isfile("source_codes/{}.cpp".format(submission.submission_id))
@@ -26,6 +25,7 @@ def extract_available_submissions(submissions: List[Submission]) -> List[Submiss
 
 print("Make sure that these directories exist: [csv, json, pickle, source_codes, assembler, pp]")
 
+# submissions.csv から extract.csv を作成
 if not os.path.exists("csv/extract.csv"):
     if not os.path.exists("csv/submissions.csv"):
         print("Download submissions.csv to ./csv")

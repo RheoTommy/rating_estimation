@@ -66,6 +66,6 @@ def get_all_source_codes():
                 ) as f:
                     f.write(source_code.encode())
             except Exception as e:
-                tqdm.write(e)
+                tqdm.write(str(e))
             else:
                 break
