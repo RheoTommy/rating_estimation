@@ -19,7 +19,7 @@ def extract_csv():
     df = pd.DataFrame([])
     for r in tqdm(reader):
         dfi = r.query("1609588800<=epoch_second<1640962800").query(
-            "language.str.startswith('C++')", engine="python"
+            "language.str.startswith('C++ (G')", engine="python"
         )
         df = pd.concat(
             [
