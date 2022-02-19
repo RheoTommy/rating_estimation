@@ -63,33 +63,36 @@ def save_all_submissions(submissions: List[Submission]):
         pickle.dump(submissions, f)
 
 
-# [submission] -> [(source code, preprocessed code, assembler)]
-def get_source_codes(submissions: List[Submission]) -> List[Tuple[str, str, str]]:
-    def f(submission: Submission) -> Tuple[str, str, str]:
+# [submission] -> ([source codes], [preprocessed codes], [assemblers])
+def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str], List[str]]:
+    def f(submission: Submission) -> str:
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             with open(
                     "source_codes/{}.cpp".format(submission.submission_id), "rb"
             ) as fi:
-                code = fi.read().decode()
+                return fi.read().decode()
         else:
             raise Exception("ソースコードがローカルにありません！")
+
+    def g(submission: Submission) -> str:
         if os.path.isfile("pp/{}.cpp".format(submission.submission_id)):
             with open(
                     "pp/{}.cpp".format(submission.submission_id), "rb"
             ) as fi:
-                pp = fi.read().decode()
+                return fi.read().decode()
         else:
             raise Exception("プリプロセス後コードがローカルにありません！")
+
+    def h(submission: Submission) -> str:
         if os.path.isfile("assembler/{}.s".format(submission.submission_id)):
             with open(
                     "assembler/{}.s".format(submission.submission_id), "rb"
             ) as fi:
-                asm = fi.read().decode()
+                return fi.read().decode()
         else:
             raise Exception("アセンブラがローカルにありません！")
-        return code, pp, asm
 
-    return list(map(f, tqdm(submissions)))
+    return list(map(f, tqdm(submissions))), list(map(g, tqdm(submissions))), list(map(h, tqdm(submissions)))
 
 
 def load_all_available_submissions() -> List[Submission]:
