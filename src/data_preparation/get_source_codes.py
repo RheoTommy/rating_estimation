@@ -55,7 +55,7 @@ def get_all_source_codes():
     for submission in tqdm(submissions):
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             continue
-        for _ in range(5):
+        for _ in range(0):
             try:
                 time.sleep(0.25)
                 source_code = get_source_code(
