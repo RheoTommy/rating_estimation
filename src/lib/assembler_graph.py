@@ -19,16 +19,16 @@ def construct_graph_from_assembler(code: str) -> Graph:
     label = []
     for i in range(0, len(words)):
         w = words[i]
-        if w[0] == 'L' and w[-1] == ':':
-            idf[w[0:len(w) - 1]] = len(label)
+        if w[0] == "L" and w[-1] == ":":
+            idf[w[0 : len(w) - 1]] = len(label)
             label.append(0 if w[1].isdigit() else 1)
     G = Graph(label)
     now = 0
     for i in range(0, len(words)):
         w = words[i]
-        if w[0] == 'L' and w[-1] == ':':
-            now = idf[w[0:len(w) - 1]]
-        elif w[0] == 'j':
+        if w[0] == "L" and w[-1] == ":":
+            now = idf[w[0 : len(w) - 1]]
+        elif w[0] == "j":
             assert i + 1 < len(words)
             to = idf[words[i + 1]]
             G.add_edge(now, to)

@@ -84,12 +84,12 @@ def create_and_train_model() -> RandomForestRegressor:
         estimators[1],
         x,
         y,
-        target_name='種類',
+        target_name="種類",
         feature_names=list(map(lambda t: t[1], characteristics)),
     )
 
     display(viz)
-    viz.save('figs/random_forest.png')
+    viz.save("figs/random_forest.png")
 
     return rf
 
