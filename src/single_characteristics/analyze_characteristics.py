@@ -106,6 +106,7 @@ characteristics = [
     (word_count_any_in_assembler_parallel("j"), "j", 2),
     (word_count_any_in_assembler_parallel("call"), "call", 2),
     (code_length, "code_length", 0),
+    (code_length, "code_length_pp", 1),
     (code_length_in_main, "code_length_in_main", 0),
     (comments_ratio, "comments_ratio", 0),
 ]
