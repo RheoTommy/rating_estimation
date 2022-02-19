@@ -21,9 +21,8 @@ from src.single_characteristics.analyze_characteristics import (
 )
 
 
-def sampling() -> Tuple[List[Submission], List[str]]:
+def sampling() -> Tuple[List[Submission], Tuple[List[str], List[str], List[str]]]:
     sample_size = 5000
-    # 提出データのローカル保存が終わったら
     all_sub = load_all_available_submissions()
     idx = np.random.choice(np.arange(len(all_sub)), sample_size, replace=False)
     sample_sub = []
@@ -36,10 +35,10 @@ def sampling() -> Tuple[List[Submission], List[str]]:
 
 
 def save_pair_plot(
-    submissions: List[Submission],
-    source_codes: List[str],
-    funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str]],
-    png_file_name: str = "pair_plot",
+        submissions: List[Submission],
+        source_codes: Tuple[List[str], List[str], List[str]],
+        funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str]],
+        png_file_name: str = "pair_plot",
 ):
     print("started testing all characteristics")
 
@@ -47,8 +46,8 @@ def save_pair_plot(
         {"ratings": list(map(lambda submission: submission.rating, submissions))}
     )
     mask = [True for _ in range(len(submissions))]
-    for (func, func_name) in tqdm(funcs_and_names):
-        features = func(source_codes)
+    for (func, func_name, subject) in tqdm(funcs_and_names):
+        features = func(source_codes[subject])
         mask = list(
             map(lambda t: t[0] and t[1], zip(mask, exclude_outliers(features, 2)))
         )
@@ -65,19 +64,20 @@ def save_pair_plot(
     print("finished testing all characteristics and saved pair plot figure")
 
 
-# func: [(Submission, str)]) -> (features: [float])
+# func: [str] -> [float]
 # data_handle_func: [float] -> [float]
 def visualize_one_characteristic(
-    submissions: List[Submission],
-    source_codes: List[str],
-    func: Callable[[List[str]], List[float]],
-    file_name: str,
-    data_handle_func: Callable[[List[float]], List[float]] = standardize,
-    data_handle_name: str = "standardize",
-    do_exclude_outliers: bool = True,
-    sigma: float = 2,
+        submissions: List[Submission],
+        source_codes: Tuple[List[str], List[str], List[str]],
+        func: Callable[[List[str]], List[float]],
+        file_name: str,
+        subject: int,
+        data_handle_func: Callable[[List[float]], List[float]] = standardize,
+        data_handle_name: str = "standardize",
+        do_exclude_outliers: bool = True,
+        sigma: float = 2,
 ):
-    features = data_handle_func(func(source_codes))
+    features = data_handle_func(func(source_codes[subject]))
     ratings = list(map(lambda submission: submission.rating, submissions))
     if do_exclude_outliers:
         mask = exclude_outliers(features, sigma)
@@ -111,9 +111,9 @@ def visualize_characteristics():
 
     # save_pair_plot(submissions, source_codes, characteristics)
 
-    for (f, fn) in characteristics:
+    for (f, fn, subject) in characteristics:
         for (hf, hfn) in data_handle_funcs_and_names:
-            visualize_one_characteristic(submissions, source_codes, f, fn, hf, hfn)
+            visualize_one_characteristic(submissions, source_codes, f, fn, subject, hf, hfn)
 
     print("all processes finished")
 
