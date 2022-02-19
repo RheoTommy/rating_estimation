@@ -19,7 +19,7 @@ def word_count_any(word: str) -> Callable[[List[str]], List[float]]:
 
 
 def word_count_any_in_main(
-    word: str, do_print_errors: bool = False
+        word: str, do_print_errors: bool = False
 ) -> Callable[[List[str]], List[float]]:
     def f(source_codes: List[str], submissions: List[Submission] = None) -> List[float]:
         res = []
@@ -55,19 +55,28 @@ def word_count_any_parallel(word: str) -> Callable[[List[str]], List[float]]:
 
 # 多分 source_codes には [str] じゃなくて tqdm[str] が送られるので添え字アクセスすると死ぬ
 def word_count_any_in_main_parallel(
-    word: str, do_print_errors: bool = False
+        word: str, do_print_errors: bool = False
 ) -> Callable[[List[str]], List[float]]:
-    def f(source_codes: List[str]) -> List[float]:
-        def sub_f(code: str) -> float:
-            code = exclude_comments(code)
+    def f(preprocessed: List[str]) -> List[float]:
+        def sub_f(pp: str) -> float:
             try:
-                return extract_str_in_main(code).count(word)
+                return extract_str_in_main(pp).count(word)
             except Exception as e:
                 if do_print_errors:
                     print(e)
                 return np.nan
 
-        return Parallel(n_jobs=-1)(delayed(sub_f)(code) for code in source_codes)
+        return Parallel(n_jobs=-1)(delayed(sub_f)(pp) for pp in preprocessed)
+
+    return f
+
+
+def word_count_any_in_assembler_parallel(word: str) -> Callable[[List[str]], List[float]]:
+    def f(assemblers: List[str]) -> List[float]:
+        def sub_f(code: str) -> float:
+            return code.count(word)
+
+        return Parallel(n_jobs=-1)(delayed(sub_f)(asm) for asm in assemblers)
 
     return f
 
@@ -86,7 +95,7 @@ def comments_ratio(source_codes: List[str]) -> List[float]:
 
 
 def code_length_in_main(
-    source_codes: List[str], do_print_errors: bool = False
+        source_codes: List[str], do_print_errors: bool = False
 ) -> List[float]:
     def f(code: str) -> float:
         try:

@@ -1,22 +1,22 @@
 import os.path
 import pickle
-from typing import List
+from typing import List, Tuple
 
 from tqdm import tqdm
 
 
 class Submission:
     def __init__(
-        self,
-        submission_id: int,
-        epoch_second: int,
-        problem_id: str,
-        contest_id: str,
-        user_id: str,
-        is_ac: bool,
-        during_contest: bool,
-        difficulty: int,
-        rating: int,
+            self,
+            submission_id: int,
+            epoch_second: int,
+            problem_id: str,
+            contest_id: str,
+            user_id: str,
+            is_ac: bool,
+            during_contest: bool,
+            difficulty: int,
+            rating: int,
     ):
         self.submission_id = submission_id
         self.epoch_second = epoch_second
@@ -63,19 +63,36 @@ def save_all_submissions(submissions: List[Submission]):
         pickle.dump(submissions, f)
 
 
-# [submission] -> [(submission, source_code)]
-def get_source_codes(submissions: List[Submission]) -> List[str]:
+# [submission] -> ([source codes], [preprocessed codes], [assemblers])
+def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str], List[str]]:
     def f(submission: Submission) -> str:
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             with open(
-                "source_codes/{}.cpp".format(submission.submission_id), "rb"
+                    "source_codes/{}.cpp".format(submission.submission_id), "rb"
             ) as fi:
-                code = fi.read().decode()
-                return code
+                return fi.read().decode()
+        else:
+            raise Exception("ソースコードがローカルにありません！")
 
-        raise Exception("ソースコードがローカルにありません！")
+    def g(submission: Submission) -> str:
+        if os.path.isfile("pp/{}.cpp".format(submission.submission_id)):
+            with open(
+                    "pp/{}.cpp".format(submission.submission_id), "rb"
+            ) as fi:
+                return fi.read().decode()
+        else:
+            raise Exception("プリプロセス後コードがローカルにありません！")
 
-    return list(map(f, tqdm(submissions)))
+    def h(submission: Submission) -> str:
+        if os.path.isfile("assembler/{}.s".format(submission.submission_id)):
+            with open(
+                    "assembler/{}.s".format(submission.submission_id), "rb"
+            ) as fi:
+                return fi.read().decode()
+        else:
+            raise Exception("アセンブラがローカルにありません！")
+
+    return list(map(f, tqdm(submissions))), list(map(g, tqdm(submissions))), list(map(h, tqdm(submissions)))
 
 
 def load_all_available_submissions() -> List[Submission]:
@@ -89,7 +106,7 @@ def save_all_available_submissions(submissions: List[Submission]):
 
 
 def filter_with_problem_id(
-    submissions: List[Submission], problem_id: str
+        submissions: List[Submission], problem_id: str
 ) -> List[Submission]:
     return list(
         filter(lambda submission: submission.problem_id == problem_id, submissions)
