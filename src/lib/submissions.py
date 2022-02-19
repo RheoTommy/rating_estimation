@@ -7,16 +7,16 @@ from tqdm import tqdm
 
 class Submission:
     def __init__(
-        self,
-        submission_id: int,
-        epoch_second: int,
-        problem_id: str,
-        contest_id: str,
-        user_id: str,
-        is_ac: bool,
-        during_contest: bool,
-        difficulty: int,
-        rating: int,
+            self,
+            submission_id: int,
+            epoch_second: int,
+            problem_id: str,
+            contest_id: str,
+            user_id: str,
+            is_ac: bool,
+            during_contest: bool,
+            difficulty: int,
+            rating: int,
     ):
         self.submission_id = submission_id
         self.epoch_second = epoch_second
@@ -68,12 +68,27 @@ def get_source_codes(submissions: List[Submission]) -> List[str]:
     def f(submission: Submission) -> str:
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             with open(
-                "source_codes/{}.cpp".format(submission.submission_id), "rb"
+                    "source_codes/{}.cpp".format(submission.submission_id), "rb"
             ) as fi:
                 code = fi.read().decode()
                 return code
 
         raise Exception("ソースコードがローカルにありません！")
+
+    return list(map(f, tqdm(submissions)))
+
+
+# [submission] -> [(submission, assembler)]
+def get_assemblers(submissions: List[Submission]) -> List[str]:
+    def f(submission: Submission) -> str:
+        if os.path.isfile("assembler/{}.s".format(submission.submission_id)):
+            with open(
+                    "assembler/{}.s".format(submission.submission_id), "rb"
+            ) as fi:
+                code = fi.read().decode()
+                return code
+
+        raise Exception("アセンブラがローカルにありません！")
 
     return list(map(f, tqdm(submissions)))
 
@@ -89,7 +104,7 @@ def save_all_available_submissions(submissions: List[Submission]):
 
 
 def filter_with_problem_id(
-    submissions: List[Submission], problem_id: str
+        submissions: List[Submission], problem_id: str
 ) -> List[Submission]:
     return list(
         filter(lambda submission: submission.problem_id == problem_id, submissions)
