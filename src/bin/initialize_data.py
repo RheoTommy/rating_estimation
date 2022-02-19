@@ -4,7 +4,7 @@ from typing import List
 
 from tqdm import tqdm
 
-from src.data_preparation.compile import prepare_assemblers, prepare_pps, start_docker, stop_docker
+from src.data_preparation.compile import prepare_assemblers, start_docker, stop_docker
 from src.data_preparation.create_submissions import create_submissions
 from src.data_preparation.extract_csv import extract_csv
 from src.data_preparation.get_source_codes import get_all_source_codes
@@ -12,7 +12,8 @@ from src.data_preparation.get_user_histories import get_all_user_histories
 from src.lib.submissions import (
     load_all_submissions,
     save_all_available_submissions,
-    Submission, load_all_available_submissions,
+    Submission,
+    load_all_available_submissions,
 )
 
 
@@ -23,7 +24,9 @@ def extract_available_submissions(submissions: List[Submission]) -> List[Submiss
     return list(filter(f, tqdm(submissions)))
 
 
-print("Make sure that these directories exist: [csv, json, pickle, source_codes, assembler, pp]")
+print(
+    "Make sure that these directories exist: [csv, json, pickle, source_codes, assembler]"
+)
 
 # submissions.csv から extract.csv を作成
 if not os.path.exists("csv/extract.csv"):
@@ -65,5 +68,4 @@ if not os.path.exists("pickle/available_submissions.pickle"):
 subs = load_all_available_submissions()
 start_docker()
 prepare_assemblers(subs)
-prepare_pps(subs)
 stop_docker()

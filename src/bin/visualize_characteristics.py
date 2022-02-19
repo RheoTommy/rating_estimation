@@ -35,10 +35,10 @@ def sampling() -> Tuple[List[Submission], Tuple[List[str], List[str]]]:
 
 
 def save_pair_plot(
-        submissions: List[Submission],
-        source_codes: Tuple[List[str], List[str]],
-        funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str, int]],
-        png_file_name: str = "pair_plot",
+    submissions: List[Submission],
+    source_codes: Tuple[List[str], List[str]],
+    funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str, int]],
+    png_file_name: str = "pair_plot",
 ):
     print("started testing all characteristics")
 
@@ -67,15 +67,15 @@ def save_pair_plot(
 # func: [str] -> [float]
 # data_handle_func: [float] -> [float]
 def visualize_one_characteristic(
-        submissions: List[Submission],
-        source_codes: Tuple[List[str], List[str]],
-        func: Callable[[List[str]], List[float]],
-        file_name: str,
-        subject: int,
-        data_handle_func: Callable[[List[float]], List[float]] = standardize,
-        data_handle_name: str = "standardize",
-        do_exclude_outliers: bool = True,
-        sigma: float = 2,
+    submissions: List[Submission],
+    source_codes: Tuple[List[str], List[str]],
+    func: Callable[[List[str]], List[float]],
+    file_name: str,
+    subject: int,
+    data_handle_func: Callable[[List[float]], List[float]] = standardize,
+    data_handle_name: str = "standardize",
+    do_exclude_outliers: bool = True,
+    sigma: float = 2,
 ):
     features = data_handle_func(func(source_codes[subject]))
     ratings = list(map(lambda submission: submission.rating, submissions))
@@ -97,7 +97,11 @@ def visualize_one_characteristic(
     plt.cla()
     plt.clf()
 
-    print("{}({}), R: {}".format(file_name, data_handle_name, pd.Series(features).corr(pd.Series(ratings))))
+    print(
+        "{}({}), R: {}".format(
+            file_name, data_handle_name, pd.Series(features).corr(pd.Series(ratings))
+        )
+    )
 
     print(
         "finished testing characteristic {} (data_handle: {})".format(
@@ -113,7 +117,9 @@ def visualize_characteristics():
 
     for (f, fn, subject) in characteristics:
         for (hf, hfn) in data_handle_funcs_and_names:
-            visualize_one_characteristic(submissions, source_codes, f, fn, subject, hf, hfn)
+            visualize_one_characteristic(
+                submissions, source_codes, f, fn, subject, hf, hfn
+            )
 
     print("all processes finished")
 

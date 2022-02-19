@@ -7,16 +7,16 @@ from tqdm import tqdm
 
 class Submission:
     def __init__(
-            self,
-            submission_id: int,
-            epoch_second: int,
-            problem_id: str,
-            contest_id: str,
-            user_id: str,
-            is_ac: bool,
-            during_contest: bool,
-            difficulty: int,
-            rating: int,
+        self,
+        submission_id: int,
+        epoch_second: int,
+        problem_id: str,
+        contest_id: str,
+        user_id: str,
+        is_ac: bool,
+        during_contest: bool,
+        difficulty: int,
+        rating: int,
     ):
         self.submission_id = submission_id
         self.epoch_second = epoch_second
@@ -68,7 +68,7 @@ def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str
     def f(submission: Submission) -> str:
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             with open(
-                    "source_codes/{}.cpp".format(submission.submission_id), "rb"
+                "source_codes/{}.cpp".format(submission.submission_id), "rb"
             ) as fi:
                 return fi.read().decode()
         else:
@@ -76,9 +76,7 @@ def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str
 
     def g(submission: Submission) -> str:
         if os.path.isfile("assembler/{}.s".format(submission.submission_id)):
-            with open(
-                    "assembler/{}.s".format(submission.submission_id), "rb"
-            ) as fi:
+            with open("assembler/{}.s".format(submission.submission_id), "rb") as fi:
                 return fi.read().decode()
         else:
             raise Exception("アセンブラがローカルにありません！")
@@ -97,7 +95,7 @@ def save_all_available_submissions(submissions: List[Submission]):
 
 
 def filter_with_problem_id(
-        submissions: List[Submission], problem_id: str
+    submissions: List[Submission], problem_id: str
 ) -> List[Submission]:
     return list(
         filter(lambda submission: submission.problem_id == problem_id, submissions)

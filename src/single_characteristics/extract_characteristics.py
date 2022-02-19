@@ -19,7 +19,7 @@ def word_count_any(word: str) -> Callable[[List[str]], List[float]]:
 
 
 def word_count_any_in_main(
-        word: str, do_print_errors: bool = False
+    word: str, do_print_errors: bool = False
 ) -> Callable[[List[str]], List[float]]:
     def f(source_codes: List[str], submissions: List[Submission] = None) -> List[float]:
         res = []
@@ -55,7 +55,7 @@ def word_count_any_parallel(word: str) -> Callable[[List[str]], List[float]]:
 
 # 多分 source_codes には [str] じゃなくて tqdm[str] が送られるので添え字アクセスすると死ぬ
 def word_count_any_in_main_parallel(
-        word: str, do_print_errors: bool = False
+    word: str, do_print_errors: bool = False
 ) -> Callable[[List[str]], List[float]]:
     def f(preprocessed: List[str]) -> List[float]:
         def sub_f(pp: str) -> float:
@@ -71,7 +71,9 @@ def word_count_any_in_main_parallel(
     return f
 
 
-def word_count_any_in_assembler_parallel(word: str) -> Callable[[List[str]], List[float]]:
+def word_count_any_in_assembler_parallel(
+    word: str,
+) -> Callable[[List[str]], List[float]]:
     def f(assemblers: List[str]) -> List[float]:
         def sub_f(code: str) -> float:
             return code.count(word)
@@ -95,7 +97,7 @@ def comments_ratio(source_codes: List[str]) -> List[float]:
 
 
 def code_length_in_main(
-        source_codes: List[str], do_print_errors: bool = False
+    source_codes: List[str], do_print_errors: bool = False
 ) -> List[float]:
     def f(code: str) -> float:
         try:
