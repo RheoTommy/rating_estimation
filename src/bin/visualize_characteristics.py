@@ -21,7 +21,7 @@ from src.single_characteristics.analyze_characteristics import (
 )
 
 
-def sampling() -> Tuple[List[Submission], Tuple[List[str], List[str], List[str]]]:
+def sampling() -> Tuple[List[Submission], Tuple[List[str], List[str]]]:
     sample_size = 5000
     all_sub = load_all_available_submissions()
     idx = np.random.choice(np.arange(len(all_sub)), sample_size, replace=False)
@@ -36,8 +36,8 @@ def sampling() -> Tuple[List[Submission], Tuple[List[str], List[str], List[str]]
 
 def save_pair_plot(
         submissions: List[Submission],
-        source_codes: Tuple[List[str], List[str], List[str]],
-        funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str]],
+        source_codes: Tuple[List[str], List[str]],
+        funcs_and_names: List[Tuple[Callable[[List[str]], List[float]], str, int]],
         png_file_name: str = "pair_plot",
 ):
     print("started testing all characteristics")
@@ -68,7 +68,7 @@ def save_pair_plot(
 # data_handle_func: [float] -> [float]
 def visualize_one_characteristic(
         submissions: List[Submission],
-        source_codes: Tuple[List[str], List[str], List[str]],
+        source_codes: Tuple[List[str], List[str]],
         func: Callable[[List[str]], List[float]],
         file_name: str,
         subject: int,

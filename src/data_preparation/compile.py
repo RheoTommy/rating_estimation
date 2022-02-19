@@ -40,27 +40,3 @@ def prepare_assemblers(submissions: List[Submission]):
     submissions = list(
         filter(lambda submission: not os.path.isfile("assembler/{}.s".format(submission.submission_id)), submissions))
     Parallel(n_jobs=-1)(delayed(f)(s) for s in tqdm(submissions))
-
-
-def prepare_pps(submissions: List[Submission]):
-    def f(s: Submission):
-        command = "docker exec cpp_compiler /bin/bash -c 'mkdir {} && cp /source_codes/{}.cpp /{}/Main.cpp'".format(
-            s.submission_id,
-            s.submission_id,
-            s.submission_id)
-        res = subprocess.check_call(command, shell=True)
-        assert res == 0
-        command = "docker exec cpp_compiler /bin/bash -c 'cd {} && g++-9 -std=gnu++17 -w -O2 -DONLINE_JUDGE -I/opt/boost/gcc/include -L/opt/boost/gcc/lib -I/opt/ac-library -E -P ./Main.cpp > new.cpp'".format(
-            s.submission_id,
-            s.submission_id)
-        res = subprocess.check_call(command, shell=True)
-        assert res == 0
-        res = subprocess.check_call(
-            "docker cp cpp_compiler:/{}/new.cpp ./pp/{}.cpp".format(s.submission_id, s.submission_id), shell=True)
-        assert res == 0
-        res = subprocess.check_call("docker exec cpp_compiler rm -r {}".format(s.submission_id), shell=True)
-        assert res == 0
-
-    submissions = list(
-        filter(lambda submission: not os.path.isfile("pp/{}.cpp".format(submission.submission_id)), submissions))
-    Parallel(n_jobs=-1)(delayed(f)(s) for s in tqdm(submissions))
