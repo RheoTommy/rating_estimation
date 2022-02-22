@@ -4,10 +4,8 @@ import sys
 from functools import reduce
 from math import ceil
 
-from dtreeviz.trees import dtreeviz
 import matplotlib.pyplot as plt
 import pandas
-from IPython.core.display import display
 from sklearn.ensemble import RandomForestRegressor
 
 import pandas as pd
@@ -27,8 +25,8 @@ def create_and_train_model() -> RandomForestRegressor:
 
     rf = RandomForestRegressor()
 
-    batch_size = 20000
-    for i in tqdm(range(ceil(len(submissions) / batch_size)), "subs"):
+    batch_size = 50000
+    for i in tqdm(range(ceil(len(submissions) / batch_size)), desc="subs"):
         subs = submissions[batch_size * i:batch_size * (i + 1)]
 
         source_codes = get_source_codes(subs)

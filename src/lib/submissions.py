@@ -68,7 +68,7 @@ def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str
     def f(submission: Submission) -> str:
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             with open(
-                "source_codes/{}.cpp".format(submission.submission_id), "rb"
+                    "source_codes/{}.cpp".format(submission.submission_id), "rb"
             ) as fi:
                 return fi.read().decode()
         else:
@@ -81,7 +81,8 @@ def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str
         else:
             raise Exception("アセンブラがローカルにありません！")
 
-    return list(map(f, tqdm(submissions))), list(map(g, tqdm(submissions)))
+    return list(map(f, tqdm(submissions, desc="getting .cpp", leave=False))), list(
+        map(g, tqdm(submissions, desc="getting .s", leave=False)))
 
 
 def load_all_available_submissions() -> List[Submission]:
