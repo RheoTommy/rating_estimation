@@ -2,6 +2,7 @@ import os.path
 import pickle
 import sys
 from functools import reduce
+from math import ceil
 
 from dtreeviz.trees import dtreeviz
 import matplotlib.pyplot as plt
@@ -22,51 +23,55 @@ from src.single_characteristics.analyze_characteristics import characteristics
 
 def create_and_train_model() -> RandomForestRegressor:
     submissions = load_all_available_submissions()
-
-    source_codes = get_source_codes(submissions)
-
-    tqdm.write("preparing train data...")
-    x = pd.DataFrame()
-    mask = [True for _ in range(len(source_codes))]
-    for (func, func_name, subject) in characteristics:
-        tqdm.write("processing: {}".format(func_name))
-        features = func(tqdm(source_codes[subject]))
-        mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_nan(features))))
-        x[func_name] = features
-    x = x[mask]
-
-    y = pd.Series(list(map(lambda submission: submission.rating, submissions)))
-    y = y[mask]
-
-    x_train, x_test, y_train, y_test = train_test_split(
-        x, y, test_size=0.2, random_state=0
-    )
-
-    sc = StandardScaler()
-    sc.fit(x_train)
-
-    x_train = sc.transform(x_train)
-    x_test = sc.transform(x_test)
+    tqdm.write("loaded submissions")
 
     rf = RandomForestRegressor()
-    rf.fit(x_train, y_train)
 
-    pred_lr = rf.predict(x_test)
+    batch_size = 20000
+    for i in tqdm(range(ceil(len(submissions) / batch_size)), "subs"):
+        subs = submissions[batch_size * i:batch_size * (i + 1)]
 
-    r2_lr = r2_score(y_test, pred_lr)
+        source_codes = get_source_codes(subs)
 
-    mae_lr = mean_absolute_error(y_test, pred_lr)
+        x = pd.DataFrame()
+        mask = [True for _ in range(len(source_codes))]
+        for (func, func_name, subject) in characteristics:
+            features = func(tqdm(source_codes[subject], leave=False, desc="processing: {}".format(func_name)))
+            mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_nan(features))))
+            x[func_name] = features
+        x = x[mask]
 
-    print("R2 : %.3f" % r2_lr)
-    print("MAE : %.3f" % mae_lr)
+        y = pd.Series(list(map(lambda submission: submission.rating, subs)))
+        y = y[mask]
 
-    plt.xlabel("pred_lr")
-    plt.ylabel("y_test")
-    plt.scatter(pred_lr, y_test)
-    plt.savefig("figs/predict.png")
+        x_train, x_test, y_train, y_test = train_test_split(
+            x, y, test_size=0.2, random_state=0
+        )
 
-    plt.cla()
-    plt.clf()
+        sc = StandardScaler()
+        sc.fit(x_train)
+
+        x_train = sc.transform(x_train)
+        x_test = sc.transform(x_test)
+
+        rf.fit(x_train, y_train)
+
+        pred_lr = rf.predict(x_test)
+
+        r2_lr = r2_score(y_test, pred_lr)
+
+        mae_lr = mean_absolute_error(y_test, pred_lr)
+
+        tqdm.write("R2 : %.3f" % r2_lr)
+        tqdm.write("MAE : %.3f" % mae_lr)
+
+        plt.xlabel("pred_lr")
+        plt.ylabel("y_test")
+        plt.scatter(pred_lr, y_test)
+        plt.savefig("figs/predict_{}.png".format(i))
+
+        plt.cla()
+        plt.clf()
 
     forest_importance = pd.Series(
         rf.feature_importances_, index=list(map(lambda t: t[1], characteristics))
@@ -78,18 +83,6 @@ def create_and_train_model() -> RandomForestRegressor:
     ax.set_ylabel("Mean decrease in impurity")
     fig.tight_layout()
     plt.savefig("figs/feature_importance.png")
-
-    estimators = rf.estimators_
-    viz = dtreeviz(
-        estimators[1],
-        x,
-        y,
-        target_name="種類",
-        feature_names=list(map(lambda t: t[1], characteristics)),
-    )
-
-    display(viz)
-    viz.save("figs/random_forest.png")
 
     return rf
 
