@@ -27,12 +27,12 @@ def create_and_train_model() -> RandomForestRegressor:
 
     batch_size = 50000
     for i in tqdm(range(ceil(len(submissions) / batch_size)), desc="subs"):
-        subs = submissions[batch_size * i:batch_size * (i + 1)]
+        subs = submissions[batch_size * i:min(batch_size * (i + 1), len(submissions))]
 
         source_codes = get_source_codes(subs)
 
         x = pd.DataFrame()
-        mask = [True for _ in range(len(source_codes))]
+        mask = [True for _ in range(len(subs))]
         for (func, func_name, subject) in characteristics:
             features = func(tqdm(source_codes[subject], leave=False, desc="processing: {}".format(func_name)))
             mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_nan(features))))
