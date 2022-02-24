@@ -103,17 +103,14 @@ def load_not_nan_submissions_and_characteristics() -> Tuple[List[Submission], Li
     submissions = load_all_available_submissions()
     chara = get_characteristics(submissions)
     mask = np.array(exclude_nan_list(chara))
-    print(mask)
-    print(len(submissions))
     submissions = np.array(submissions)[mask]
-    print(len(submissions))
     chara = np.array(chara)[mask]
     return submissions, chara
 
 
-def load_train_data() -> Tuple[List[List[float]], List[List[float]]]:
+def load_train_data(make_y_list: bool = False) -> Tuple[List[List[float]], List[List[float]]]:
     submissions, chara = load_not_nan_submissions_and_characteristics()
-    return chara, [[submission.rating] for submission in submissions]
+    return chara, [[submission.rating] if make_y_list else submission.rating for submission in submissions]
 
 
 def load_all_available_submissions() -> List[Submission]:
