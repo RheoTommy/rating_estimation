@@ -48,7 +48,7 @@ def train():
     else:
         net = Net(len(characteristics), 100, 3)
 
-    opt = torch.optim.Adam(net.parameters(), lr=1e-3)
+    opt = torch.optim.Adam(net.parameters(), lr=5e-4)
 
     epoch = 500
     batch_size = 2000
@@ -101,7 +101,8 @@ def train():
             y = torch.tensor(y).to(device).float()
 
             pre_y = net.forward(x)
-            loss = F.mse_loss(y, pre_y)
+            mse = torch.nn.MSELoss()
+            loss = mse(y, pre_y)
             tqdm.write("test loss: {}".format(loss))
 
             plt.xlabel("pred_lr")
