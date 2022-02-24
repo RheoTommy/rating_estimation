@@ -38,4 +38,4 @@ def extract_specified_elements(data: List[T], mask: List[bool]) -> List[T]:
 
 
 def exclude_nan_list(data: List[List[float]]) -> List[bool]:
-    return [not np.NaN in d for d in data]
+    return [not np.isnan(d).any() for d in data]

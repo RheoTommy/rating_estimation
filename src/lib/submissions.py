@@ -103,7 +103,10 @@ def load_not_nan_submissions_and_characteristics() -> Tuple[List[Submission], Li
     submissions = load_all_available_submissions()
     chara = get_characteristics(submissions)
     mask = np.array(exclude_nan_list(chara))
+    print(mask)
+    print(len(submissions))
     submissions = np.array(submissions)[mask]
+    print(len(submissions))
     chara = np.array(chara)[mask]
     return submissions, chara
 

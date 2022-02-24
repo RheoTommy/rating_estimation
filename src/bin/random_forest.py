@@ -2,7 +2,6 @@ import os.path
 import pickle
 import sys
 from functools import reduce
-from math import ceil
 
 import matplotlib.pyplot as plt
 import pandas
