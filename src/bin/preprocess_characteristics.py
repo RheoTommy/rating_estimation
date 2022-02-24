@@ -8,6 +8,7 @@ from src.lib.submissions import load_all_available_submissions, get_source_codes
 from src.single_characteristics.analyze_characteristics import characteristics
 
 
+# characteristics を変更するたびに実行しよう
 def preprocess_characteristics():
     submissions = load_all_available_submissions()
 

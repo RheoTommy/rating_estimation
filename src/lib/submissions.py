@@ -85,6 +85,17 @@ def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str
         map(g, tqdm(submissions, desc="getting .s", leave=False)))
 
 
+def get_characteristics(submissions: List[Submission]) -> List[List[float]]:
+    def f(submission: Submission) -> List[float]:
+        if os.path.isfile("characteristics/{}.pickle".format(submission.submission_id)):
+            with open("characteristics/{}.pickle".format(submission.submission_id), "rb") as fi:
+                return pickle.load(fi)
+        else:
+            raise Exception("特徴量がローカルにありません！")
+
+    return list(map(f, tqdm(submissions, desc="getting characteristics", leave=False)))
+
+
 def load_all_available_submissions() -> List[Submission]:
     with open("pickle/available_submissions.pickle", "rb") as f:
         return pickle.load(f)
