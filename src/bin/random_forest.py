@@ -65,7 +65,7 @@ def create_and_train_model() -> RandomForestRegressor:
 
         plt.xlabel("pred_lr")
         plt.ylabel("y_test")
-        plt.scatter(pred_lr, y_test)
+        plt.scatter(pred_lr, y_test , s=4)
         plt.savefig("figs/predict_{}.png".format(i))
 
         plt.cla()
