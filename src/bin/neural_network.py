@@ -5,6 +5,7 @@ from math import ceil
 import pandas as pd
 import torch
 import torch.nn as nn
+import  torch.nn.functional as F
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
@@ -45,12 +46,12 @@ def train():
     if os.path.isfile("pickle/nn.pickle"):
         net = torch.load("pickle/nn.pickle")
     else:
-        net = Net(len(characteristics), 100, 8)
+        net = Net(len(characteristics), 100, 3)
 
-    opt = torch.optim.Adam(net.parameters(), lr=5e-3)
+    opt = torch.optim.Adam(net.parameters(), lr=1e-3)
 
     epoch = 500
-    batch_size = 50000
+    batch_size = 2000
     tqdm.write("start training")
     for e in tqdm(range(epoch), desc="epoch"):
         net.train(True)
@@ -85,7 +86,7 @@ def train():
         with torch.no_grad():
             source_codes = get_source_codes(submissions_test)
 
-            x = pd.DataFrame
+            x = pd.DataFrame()
             mask = [True for _ in range(len(submissions_test))]
             for (func, func_name, subject) in characteristics:
                 features = func(tqdm(source_codes[subject], leave=False, desc="{}".format(func_name)))
@@ -100,8 +101,7 @@ def train():
             y = torch.tensor(y).to(device).float()
 
             pre_y = net.forward(x)
-            mse = nn.MSELoss()
-            loss = mse(y, pre_y)
+            loss = F.mse_loss(y, pre_y)
             tqdm.write("test loss: {}".format(loss))
 
             plt.xlabel("pred_lr")
