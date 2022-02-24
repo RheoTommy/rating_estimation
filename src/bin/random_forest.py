@@ -61,7 +61,7 @@ def create_and_train_model() -> RandomForestRegressor:
     forest_importance.plot.bar(ax=ax)
     ax.set_title("Feature importance using MDI")
     ax.set_ylabel("Mean decrease in impurity")
-    fig.tight_layout()
+    plt.tight_layout()
     plt.savefig("figs/rf_feature_importance.png")
 
     return rf
