@@ -1,118 +1,88 @@
 import os.path
-import random
-from math import ceil
 
-import pandas as pd
 import torch
 import torch.nn as nn
-import  torch.nn.functional as F
 from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-from src.lib.data_handling import exclude_nan
-from src.lib.submissions import load_all_available_submissions, Submission, get_source_codes
+from src.lib.submissions import load_train_data
 from src.single_characteristics.analyze_characteristics import characteristics
 
 device = torch.device("cuda")
 
 
 class Net(nn.Module):
-    def __init__(self, input_size: int, hidden_size: int, hidden_amount: int):
+    def __init__(self, input_size: int):
         super().__init__()
-        self.input_layer = nn.Linear(input_size, hidden_size).to(device)
-        layer = [nn.Linear(hidden_size, hidden_size).to(device) for _ in range(hidden_amount - 1)]
-        self.layer = nn.ModuleList(layer)
-        self.output_layer = nn.Linear(hidden_size, 1).to(device)
         self.relu = nn.ReLU().to(device)
-        self.float()
+        self.fc1 = nn.Linear(input_size, 128).to(device)
+        self.fc2 = nn.Linear(128, 64).to(device)
+        self.fc3 = nn.Linear(64, 1).to(device)
+        self.dropout = nn.Dropout(p=0.5).to(device)
 
     def forward(self, x):
-        x = self.input_layer(x)
+        x = self.fc1(x)
         x = self.relu(x)
-        for l in self.layer:
-            x = l(x)
-            x = self.relu(x)
-        x = self.output_layer(x)
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc3(x)
         return x
 
 
 def train():
-    submissions = load_all_available_submissions()
-    random.shuffle(submissions)
-    idx = ceil(len(submissions) * 0.8)
-    submissions_train = submissions[:idx]
-    submissions_test = submissions[idx:]
+    x, y = load_train_data(make_y_list=True)
 
     if os.path.isfile("pickle/nn.pickle"):
         net = torch.load("pickle/nn.pickle")
     else:
-        net = Net(len(characteristics), 100, 3)
+        net = Net(len(characteristics))
 
-    opt = torch.optim.Adam(net.parameters(), lr=5e-4)
+    opt = torch.optim.Adam(net.parameters(), lr=0.001)
 
-    epoch = 500
-    batch_size = 2000
-    tqdm.write("start training")
+    epoch = 50000
     for e in tqdm(range(epoch), desc="epoch"):
+        x_train, x_test, y_train, y_test = train_test_split(
+            x, y, test_size=0.2
+        )
+
         net.train(True)
-        for i in range(ceil(len(submissions_train) / batch_size)):
-            subs = submissions_train[batch_size * i: min(batch_size * (i + 1), len(submissions_train))]
-            source_codes = get_source_codes(subs)
+        x_train = torch.tensor(x_train).to(device).float()
+        y_train = torch.tensor(y_train).to(device).float()
 
-            x = pd.DataFrame()
-            mask = [True for _ in range(len(subs))]
-            for (func, func_name, subject) in characteristics:
-                features = func(tqdm(source_codes[subject], leave=False, desc="{}".format(func_name)))
-                mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_nan(features))))
-                x[func_name] = features
-            x = x[mask]
+        pred_y = net.forward(x_train)
 
-            x = x.values.tolist()
-            y = pd.Series(list(map(lambda submission: [submission.rating], subs)))
-            y = y[mask].values.tolist()
-
-            x = torch.tensor(x).to(device).float()
-            y = torch.tensor(y).to(device).float()
-
-            pre_y = net.forward(x)
-
-            mse = nn.MSELoss()
-            loss = mse(y, pre_y)
-            opt.zero_grad()
-            loss.backward()
-            opt.step()
-            tqdm.write("loss: {}".format(loss))
+        mse = nn.MSELoss()
+        loss = mse(y_train, pred_y)
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+        tqdm.write("loss: {}".format(loss))
 
         with torch.no_grad():
-            source_codes = get_source_codes(submissions_test)
+            net.eval()
+            x_test = torch.tensor(x_test).to(device).float()
+            y_test = torch.tensor(y_test).to(device).float()
 
-            x = pd.DataFrame()
-            mask = [True for _ in range(len(submissions_test))]
-            for (func, func_name, subject) in characteristics:
-                features = func(tqdm(source_codes[subject], leave=False, desc="{}".format(func_name)))
-                mask = list(map(lambda t: t[0] and t[1], zip(mask, exclude_nan(features))))
-                x[func_name] = features
-            x = x[mask]
+            pred_y_test = net.forward(x_test)
 
-            x = x.values.tolist()
-            y = list(map(lambda submission: submission.rating, submissions_test))
+            mse = nn.MSELoss()
+            loss = mse(y_test, pred_y_test)
 
-            x = torch.tensor(x).to(device).float()
-            y = torch.tensor(y).to(device).float()
-
-            pre_y = net.forward(x)
-            mse = torch.nn.MSELoss()
-            loss = mse(y, pre_y)
             tqdm.write("test loss: {}".format(loss))
+
+            y_test = y_test.to("cpu").detach().numpy().copy()
+            pred_y_test = pred_y_test.to("cpu").detach().numpy().copy()
 
             plt.xlabel("pred_lr")
             plt.ylabel("y_test")
-            plt.scatter(pre_y, y)
+            plt.scatter(pred_y_test, y_test)
             plt.savefig("figs/predict_nn_{}.png".format(e))
             plt.cla()
             plt.clf()
 
-    torch.save(net, "pickle/nn.pickle")
+        torch.save(net, "pickle/nn.pickle")
 
 
 train()
