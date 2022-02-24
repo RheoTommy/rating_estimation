@@ -77,22 +77,8 @@ def load_model() -> RandomForestRegressor:
         return pickle.load(f)
 
 
-def predict(model: RandomForestRegressor):
-    print("input your source code here")
-    source_code = reduce(lambda s, t: s + t, sys.stdin.readlines(), " ")
-    x = pandas.DataFrame()
-    for (func, func_name) in characteristics:
-        features = func([source_code])
-        x[func_name] = features
-
-    y = model.predict(x.values)
-    print(y)
-
-
 if os.path.exists("pickle/random_forest.pickle"):
     mdl = load_model()
 else:
     mdl = create_and_train_model()
     save_model(mdl)
-
-predict(mdl)
