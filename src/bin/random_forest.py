@@ -32,6 +32,8 @@ def create_and_train_model() -> RandomForestRegressor:
     x_train = sc.transform(x_train)
     x_test = sc.transform(x_test)
 
+    rf.verbose = 1
+    rf.n_jobs = -1
     rf.fit(x_train, y_train)
 
     pred_lr = rf.predict(x_test)
