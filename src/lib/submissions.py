@@ -2,7 +2,10 @@ import os.path
 import pickle
 from typing import List, Tuple
 
+import numpy as np
 from tqdm import tqdm
+
+from src.lib.data_handling import exclude_nan_list
 
 
 class Submission:
@@ -94,6 +97,20 @@ def get_characteristics(submissions: List[Submission]) -> List[List[float]]:
             raise Exception("特徴量がローカルにありません！")
 
     return list(map(f, tqdm(submissions, desc="getting characteristics", leave=False)))
+
+
+def load_not_nan_submissions_and_characteristics() -> Tuple[List[Submission], List[List[float]]]:
+    submissions = load_all_available_submissions()
+    chara = get_characteristics(submissions)
+    mask = np.array(exclude_nan_list(chara))
+    submissions = np.array(submissions)[mask]
+    chara = np.array(chara)[mask]
+    return submissions, chara
+
+
+def load_train_data() -> Tuple[List[List[float]], List[List[float]]]:
+    submissions, chara = load_not_nan_submissions_and_characteristics()
+    return chara, [[submission.rating] for submission in submissions]
 
 
 def load_all_available_submissions() -> List[Submission]:
