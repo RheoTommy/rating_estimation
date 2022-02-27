@@ -17,8 +17,9 @@ class Net(nn.Module):
         super().__init__()
         self.relu = nn.ReLU().to(device)
         self.fc1 = nn.Linear(input_size, 128).to(device)
-        self.fc2 = nn.Linear(128, 64).to(device)
-        self.fc3 = nn.Linear(64, 1).to(device)
+        self.fc2 = nn.Linear(128, 128).to(device)
+        self.fc3 = nn.Linear(128, 64).to(device)
+        self.fc4 = nn.Linear(64, 1).to(device)
         self.dropout = nn.Dropout(p=0.5).to(device)
 
     def forward(self, x):
@@ -28,6 +29,9 @@ class Net(nn.Module):
         x = self.relu(x)
         x = self.dropout(x)
         x = self.fc3(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc4(x)
         return x
 
 
@@ -41,12 +45,11 @@ def train():
 
     opt = torch.optim.Adam(net.parameters(), lr=0.001)
 
-    epoch = 50000
-    for e in tqdm(range(epoch), desc="epoch"):
-        x_train, x_test, y_train, y_test = train_test_split(
-            x, y, test_size=0.2
-        )
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
+    epoch = 50000
+    for e in tqdm(range(epoch
+                        ), desc="epoch"):
         net.train(True)
         x_train = torch.tensor(x_train).to(device).float()
         y_train = torch.tensor(y_train).to(device).float()
