@@ -1,10 +1,7 @@
 import os.path
 import pickle
-import sys
-from functools import reduce
 
 import matplotlib.pyplot as plt
-import pandas
 from sklearn.ensemble import RandomForestRegressor
 
 import pandas as pd
@@ -47,7 +44,7 @@ def create_and_train_model() -> RandomForestRegressor:
 
     plt.xlabel("pred_lr")
     plt.ylabel("y_test")
-    plt.scatter(pred_lr, y_test, s=4)
+    plt.scatter(pred_lr, y_test, s=1)
     plt.savefig("figs/predict_rf.png")
 
     plt.cla()
