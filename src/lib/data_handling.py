@@ -35,3 +35,7 @@ T = TypeVar("T")
 
 def extract_specified_elements(data: List[T], mask: List[bool]) -> List[T]:
     return list(map(lambda t: t[0], filter(lambda t: t[1], zip(data, mask))))
+
+
+def exclude_nan_list(data: List[List[float]]) -> List[bool]:
+    return [not np.isnan(d).any() for d in data]

@@ -2,7 +2,10 @@ import os.path
 import pickle
 from typing import List, Tuple
 
+import numpy as np
 from tqdm import tqdm
+
+from src.lib.data_handling import exclude_nan_list
 
 
 class Submission:
@@ -68,7 +71,7 @@ def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str
     def f(submission: Submission) -> str:
         if os.path.isfile("source_codes/{}.cpp".format(submission.submission_id)):
             with open(
-                "source_codes/{}.cpp".format(submission.submission_id), "rb"
+                    "source_codes/{}.cpp".format(submission.submission_id), "rb"
             ) as fi:
                 return fi.read().decode()
         else:
@@ -81,7 +84,33 @@ def get_source_codes(submissions: List[Submission]) -> Tuple[List[str], List[str
         else:
             raise Exception("アセンブラがローカルにありません！")
 
-    return list(map(f, tqdm(submissions))), list(map(g, tqdm(submissions)))
+    return list(map(f, tqdm(submissions, desc="getting .cpp", leave=False))), list(
+        map(g, tqdm(submissions, desc="getting .s", leave=False)))
+
+
+def get_characteristics(submissions: List[Submission]) -> List[List[float]]:
+    def f(submission: Submission) -> List[float]:
+        if os.path.isfile("characteristics/{}.pickle".format(submission.submission_id)):
+            with open("characteristics/{}.pickle".format(submission.submission_id), "rb") as fi:
+                return pickle.load(fi)
+        else:
+            raise Exception("特徴量がローカルにありません！")
+
+    return list(map(f, tqdm(submissions, desc="getting characteristics", leave=False)))
+
+
+def load_not_nan_submissions_and_characteristics() -> Tuple[List[Submission], List[List[float]]]:
+    submissions = load_all_available_submissions()
+    chara = get_characteristics(submissions)
+    mask = np.array(exclude_nan_list(chara))
+    submissions = np.array(submissions)[mask]
+    chara = np.array(chara)[mask]
+    return submissions, chara
+
+
+def load_train_data(make_y_list: bool = False) -> Tuple[List[List[float]], List[List[float]]]:
+    submissions, chara = load_not_nan_submissions_and_characteristics()
+    return chara, [[submission.rating] if make_y_list else submission.rating for submission in submissions]
 
 
 def load_all_available_submissions() -> List[Submission]:

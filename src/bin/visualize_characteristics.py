@@ -21,8 +21,7 @@ from src.single_characteristics.analyze_characteristics import (
 )
 
 
-def sampling() -> Tuple[List[Submission], Tuple[List[str], List[str]]]:
-    sample_size = 5000
+def sampling(sample_size: int = 5000) -> Tuple[List[Submission], Tuple[List[str], List[str]]]:
     all_sub = load_all_available_submissions()
     idx = np.random.choice(np.arange(len(all_sub)), sample_size, replace=False)
     sample_sub = []
