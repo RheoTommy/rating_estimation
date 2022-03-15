@@ -1,5 +1,6 @@
 import os.path
 import pickle
+from collections import defaultdict
 from typing import List, Tuple
 
 import numpy as np
@@ -111,6 +112,25 @@ def load_not_nan_submissions_and_characteristics() -> Tuple[List[Submission], Li
 def load_train_data(make_y_list: bool = False) -> Tuple[List[List[float]], List[List[float]]]:
     submissions, chara = load_not_nan_submissions_and_characteristics()
     return chara, [[submission.rating] if make_y_list else submission.rating for submission in submissions]
+
+
+def load_train_data_based_person() -> Tuple[List[List[float]], List[List[List[float]]]]:
+    submissions, characteristics = load_not_nan_submissions_and_characteristics()
+    chara = defaultdict(lambda: [])
+    for sub, ch in tqdm(zip(submissions, characteristics), desc="grouping by user_id"):
+        chara[sub.user_id].append((sub.rating, ch))
+    v = list(chara.values())
+    x = []
+    y = []
+    for vi in v:
+        xv = []
+        yv = []
+        for yi, xi in vi:
+            xv.append(xi)
+            yv.append(yi)
+        x.append(xv)
+        y.append(yv)
+    return y, x
 
 
 def load_all_available_submissions() -> List[Submission]:
