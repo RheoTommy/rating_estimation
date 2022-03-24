@@ -77,6 +77,8 @@ def create_and_train_model() -> RandomForestRegressor:
         rf.feature_importances_, index=list(map(lambda t: t[1], characteristics))
     )
 
+    forest_importance = forest_importance[forest_importance >= 0.01]
+
     fig, ax = plt.subplots()
     forest_importance.plot.bar(ax=ax)
     ax.set_title("Feature importance using MDI")
