@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>あなたのコードは何色相当？</title>
+</head>
+<body>
+<p>ここにあなたのコードを貼ってね！</p>
+<p>ただし以下の条件を満たすこと</p>
+<ul>
+    <li>C++ のコードである</li>
+    <li>AtCoder の C++17 でコンパイルが通る</li>
+    <li>長さが常識の範囲内</li>
+</ul>
+<div id="rate"><p>あなたのレーティングは：</p></div>
+<div><label>
+    <textarea name="sc" cols="100" rows="20" id="sc"></textarea>
+</label></div>
+<input type="button" value="送信！" id="send">
+<div id="text"></div>
+<script>
+    const socket = new WebSocket("ws://127.0.0.1:12345")
+
+    function click() {
+        console.log("clicked")
+        let ta = document.getElementById("sc")
+        let sc = ta.value
+        if (sc !== "") {
+            socket.send(sc)
+            let text = document.getElementById("text");
+            text.innerHTML = "<p>実行中！</p>"
+            button.disabled = true;
+        }
+    }
+
+    socket.addEventListener('message', function (event) {
+        button.disabled = false;
+        let text = document.getElementById("text")
+        text.innerHTML = "<p>実行完了！</p>"
+        document.getElementById("rate").innerHTML = "<p>あなたのレーティングは：" + event.data + "</p>";
+    });
+
+    let button = document.getElementById("send")
+    button.addEventListener("click", click)
+
+</script>
+</body>
+</html>

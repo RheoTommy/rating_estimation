@@ -12,8 +12,7 @@ from src.single_characteristics.extract_characteristics import (
 )
 
 # 0 -> source code
-# 1 -> preprocessed code
-# 2 -> assembler
+# 1 -> assembler
 characteristics = [
     (word_count_any_parallel("define"), "wc_define", 0),
     (word_count_any_parallel("using"), "wc_using", 0),

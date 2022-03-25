@@ -1,3 +1,4 @@
-s = 0.001
+import time
 
-print("a: " + s)
+print(time.time())
+
